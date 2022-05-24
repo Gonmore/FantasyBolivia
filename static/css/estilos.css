@@ -1,0 +1,682 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+}
+
+body{
+    background-image: url(../images/bg4.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+main{
+    width: 100%;
+    padding: 20px;
+    margin: auto;
+    margin-top: 100px;
+}
+
+.contenedor__todo{
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    position: relative;
+}
+
+.caja__trasera{
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 128, 255, 0.5);
+
+}
+
+.caja__trasera div{
+    margin: 100px 40px;
+    color: white;
+    transition: all 500ms;
+}
+
+
+.caja__trasera div p,
+.caja__trasera button{
+    margin-top: 30px;
+}
+
+.caja__trasera div h3{
+    font-weight: 400;
+    font-size: 26px;
+}
+
+.caja__trasera div p{
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.caja__trasera button{
+    padding: 10px 40px;
+    border: 2px solid #fff;
+    font-size: 14px;
+    background: transparent;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    outline: none;
+    transition: all 300ms;
+}
+
+
+
+.caja__trasera button:hover{
+    background: #fff;
+    color: #46A2FD;
+}
+
+/*Formularios*/
+
+.contenedor__login-register{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 380px;
+    position: relative;
+    top: -185px;
+    left: 10px;
+
+    /*La transicion va despues del codigo JS*/
+    transition: left 500ms cubic-bezier(0.175, 0.885, 0.320, 1.275);
+}
+
+.contenedor__login-register form{
+    width: 100%;
+    padding: 80px 20px;
+    background: white;
+    position: absolute;
+    border-radius: 20px;
+}
+
+.contenedor__login-register form h2{
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #46A2FD;
+}
+    
+
+
+.contenedor__login-register form input{
+    width: 100%;
+    margin-top: 20px;
+    padding: 10px;
+    border: none;
+    background: #F2F2F2;
+    font-size: 16px;
+    outline: none;
+}
+
+.contenedor__login-register form button{
+    padding: 10px 40px;
+    margin-top: 40px;
+    border: none;
+    font-size: 14px;
+    background: #46A2FD;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    outline: none;
+}
+
+
+
+
+.formulario__login{
+    opacity: 1;
+    display: block;
+}
+.formulario__register{
+    display: none;
+}
+
+
+
+@media screen and (max-width: 850px){
+
+    main{
+        margin-top: 50px;
+    }
+
+    .caja__trasera{
+        max-width: 350px;
+        height: 300px;
+        flex-direction: column;
+        margin: auto;
+    }
+
+    .caja__trasera div{
+        margin: 0px;
+        position: absolute;
+    }
+
+
+    /*Formularios*/
+
+    .contenedor__login-register{
+        top: -10px;
+        left: -5px;
+        margin: auto;
+    }
+
+    .contenedor__login-register form{
+        position: relative;
+    }
+}
+
+.container_select {
+    
+    color: #f3f5f7;
+}
+.container_select div tbody{
+    
+    color: #f3f5f7;
+}
+
+
+#grid-container {
+    display: grid;
+    background-image: url(../images/396px_600px-Football_field.svg.png);
+    width: 75%;
+    position: relative;
+    font-size: 11px ;
+    max-width: 336px;
+    max-height: 510px;
+    min-width: 308px;
+    min-height: 500px;
+    justify-content: center;
+    align-items: center;
+    background-size:contain;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+}
+
+.casilla {
+    margin: auto;
+    align-items: center;
+    
+    
+}
+
+#foto_jugador {
+    border-radius: 80%;
+    width: 50px;
+}
+.header_fijo {
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+
+#lista1 {
+    height: 400px;
+}
+
+#lista1 table {
+    width:auto;
+    text-align: center;
+    table-layout: fixed;
+    height: 340px;
+
+
+}
+#lista1 table tbody th, td{
+    color:rgb(0, 199, 199);
+    
+}
+#lista1 table thead tr>th:nth-child(1),
+#lista1 table tbody tr>td:nth-child(1){
+    min-width: 60px;
+    max-width: 60px;
+}
+#lista1 table thead tr>th:nth-child(2),
+#lista1 table tbody tr>td:nth-child(2){
+    min-width: 150px;
+    max-width: 150px;
+}
+#lista1 table thead tr>th:nth-child(3),
+#lista1 table tbody tr>td:nth-child(3){
+    min-width: 40px;
+    max-width: 40px;
+}
+#lista1 table thead tr>th:nth-child(4),
+#lista1 table tbody tr>td:nth-child(4){
+    min-width: 50px;
+    max-width: 50px;
+}
+#lista1 table thead tr>th:nth-child(5),
+#lista1 table tbody tr>td:nth-child(5){
+    min-width: 60px;
+}
+
+#lista1 table tbody td button{
+    color:rgb(0, 199, 199);
+}
+.tabla-fija tbody{
+    overflow-y: auto;
+    border-collapse: collapse;
+}
+.tabla-fija thead tr{
+    display: block;
+    position:relative;
+}
+.tabla-fija tbody{
+    display: block;
+    overflow: auto;
+    height: 320px;
+}
+
+.boton-selec, .boton-info {
+    border: none;
+    background: transparent;
+    color: rgb(255, 255, 255);
+    text-align:inherit;
+    font-size: 16px;
+}
+.jugador_ico {
+    border: none;
+    background: transparent;
+    justify-content: center;
+}
+.jugador_ico img{
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+}
+.jugador_ico_transf {
+    border: none;
+    background: transparent;
+    justify-content: center;
+}
+.jugador_ico.transf img{
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+}
+
+.resaltar {
+    cursor: default;
+    background-color: yellow;
+    color: crimson;
+}
+#tarjeta {
+    width: 30px;
+    background-color: transparent;
+}
+
+#img_cambiada {
+    width: 70%;
+    
+    
+}
+
+.cuadro_contenedor {
+    border-radius: 10px;
+    border: solid;
+    border-color: transparent;
+    background-color:transparent;
+    height: 90%;
+    width: 90%;
+    min-width: 40px;
+    min-height: 60px;
+    max-width: 60px;
+    max-height: 96px;
+    margin: auto;
+    justify-content: center;
+    align-items:center;
+    vertical-align: bottom;
+
+}
+.cuadro_int {
+    
+    max-height: 50%;
+    border: solid;
+    border-color: transparent;
+    margin-top: 10px;
+    
+}
+.btn-close {
+    display: none;
+    justify-content: center;
+    background-color:orangered;
+    margin-left: 35%;   
+}
+.btn-change {
+    display: none;
+    border: none;
+    justify-content: center;
+    background-color:transparent;
+    margin-left: 35%;
+    
+}
+
+#filadatos {
+   width: 70%;
+} 
+#campopresupuesto {
+    font-weight:bold;
+}
+.cajafiltro {
+    padding-top: 5px;
+    width: 50%;
+    min-width: 400px;
+}
+.img_reemplazo {
+    display:none;
+}
+.cuadro_suplentes {
+    
+    border-radius: 10px;
+    border: solid;
+    border-color:wheat;
+    background-color:wheat;
+    width: 80%;
+    height: 1fr;
+    width: 1fr;
+    font-size: 10px ;
+    min-height: 85px;
+    justify-content: center;
+    align-items: center;
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    justify-content: center;
+    align-items: center;
+    max-width: 356px;
+    min-width: 308px;
+    min-height: 115px;
+}
+.suplente_int{
+    width: 98%;
+    height: 95%;
+    border: none;
+    border-color:rgba(0, 128, 255, 0.5);
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    padding: unset;
+}
+.casilla_sup {
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    padding: unset;
+    margin-top: 10%;
+    margin-left: 5%;
+}
+.cuadro_int_sup {
+    width: 90%;
+    height: 80%;
+    
+    vertical-align: top;
+    padding: unset;
+}
+.cuadro_contenedor .btn-change  {
+    margin-top: -15%;
+}
+.material-icons {
+    vertical-align: middle;
+
+}
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-20 { font-size: 22px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+#col2 {
+    margin-top: 15px;
+    padding-top: 10px;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+    align-items: center;
+    max-width: 80px;
+    height: 480px;
+    background-color:rgb(255, 255, 255, 0.2);
+    
+}
+.cuadro_cont_bench {
+    height: 60%;
+}
+.cuadro_int_bench_des {
+    font-size:10px;
+    display: grid;
+    grid-template-rows: repeat(4, 1fr);
+    max-width: 60px;
+    height: 100%; 
+}
+.cuadro_int_bench {
+    max-width: 60px;
+    height: 20%;
+    overflow: hidden;   
+}
+#bench {
+    border: none;
+    background: transparent;
+    width: 70px;
+    height: 1fr;
+    margin-left: -10%;
+}
+.cuadro_int_bench img{
+    width: 100%;
+    height: auto;
+}
+@supports(object-fit: cover){
+    .cuadro_int_bench img{
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      padding-top: 30px;
+    }
+}
+.disabledbutton {
+    pointer-events: none;
+    opacity: 0.4;
+}
+.page-wrapper {
+    margin: 15px;
+    background-color: transparent;
+}
+  
+.page-wrapper {
+    margin: 15px;
+    background-image: url(../images/396px_600px-Football_field.svg.png);
+    width: 75%;
+    position: relative;
+    font-size: 10px ;
+    color: black;
+    max-width: 333px;
+    max-height: 540px;
+    min-width: 308px;
+    min-height: 480px;
+    justify-content: center;
+    align-items: center;
+    background-size:contain;
+    
+}
+.row_cancha {
+display: flex;
+-ms-flex-align: center;
+flex-direction: row;
+flex-wrap: nowrap;
+width: 100%;
+height: 20%;
+}
+
+.column {
+display: flex;
+flex-direction: column;
+flex-basis: 100%;
+flex: 1;
+}
+#fila_principal{
+    padding: 10px;
+}
+.btn_transf {
+    padding-left: 3px;
+    background-color:rgb(255, 255, 255, 0.2);
+    border: none;
+}
+.btn_return {
+    padding-left: 3px;
+    background-color:rgb(255, 255, 255, 0.2);
+    border: none;
+}
+#tableModal .modal-boody{
+    background-color: #0d2297d2;
+    color: black;
+    padding: 10px;
+    padding-right: 20px;
+    
+}
+#tableModal .modal-boody tbody td{
+    color: black;
+}
+#tableModal .modal-boody tbody td button{
+    
+    color: black;
+    font-weight: bolder;
+}
+#tableModal .modal-boody tbody td{
+    max-width: 105px;
+    color: black;
+}
+#favModal .modal-body tbody{
+    text-align: center;
+}
+.ocultoSearch {
+    color: red;
+    display: none;
+}
+
+
+.plano-wraper {
+    background-color: transparent;
+    margin: 10px;
+    position: relative;
+    max-width: 95%;
+    min-width: 400px;
+    justify-content: center;
+    align-items: center;
+    background-size:contain;
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
+}
+.columna-principal {
+    margin-top: 10px;
+    padding-top: 10px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 650px;
+    min-width: 600px;
+    height: 670px;
+    border: solid;
+    border-color: aqua;
+}
+.columna-lateral {
+    margin-top: 10px;
+    padding-top: 10px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 400px;
+    min-width: 300px;
+    height: 670px;
+    border: solid;
+    border-color: rgb(255, 81, 0);
+}
+.fila-menu {
+    display: flex;
+    -ms-flex-align: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 25%;
+    }
+.fila-cancha {
+    display: flex;
+    -ms-flex-align: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
+    height: 75%;
+    justify-content: center;
+    align-items: center;
+    }
+.fila-lateral{
+    margin: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: solid;
+    height: 50%;
+    width: 90%;
+    border-color: rgb(10, 170, 103);
+}
+.tabla_liga{
+    max-width: 200px;
+    color: #f3f5f7;
+    font-style: oblique;
+}
+.tabla_liga thead tr th{
+    color: #f3f5f7;
+}
+#cabecera_principal{
+    width: 100%;
+    left: 0;
+    top: 0;
+    position: fixed;
+    z-index: 1;
+}
+html body{
+    padding-top: 65px;
+   }
+.titulo_liga{
+    color: #F2F2F2;
+}
+.card{
+    color: rgb(46, 13, 196);
+}
+#overlay {
+    position: fixed; /* Sit on top of the page content */
+    display: none; /* Hidden by default */
+    width: 45%; /* Full width (cover the whole page) */
+    height: 35%; /* Full height (cover the whole page) */
+    top: 20%;
+    right: 5%;
+    bottom: 0;
+    background-color: rgba(250, 249, 249, 0.877); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    /*cursor: pointer; /* Add a pointer on hover */
+  }
+
+.datos-jugador p{
+    color: black;
+}
