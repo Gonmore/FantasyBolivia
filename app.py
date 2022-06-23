@@ -105,6 +105,7 @@ def abr_pos(pos):
         newpos = 'Ata'
     return(newpos)
 
+#aun debe revisarse esta parte pensando en la modalidad COPA
 def carga_equipo(param):
     global P1,P2,D1,D2,D3,D4,D5,M1,M2,M3,M4,M5,A1,A2,A3,frecuencia,precio_equipo,dicequipo,torneo,ronda
         
@@ -116,16 +117,58 @@ def carga_equipo(param):
     cur = mysql.connection.cursor()
     
     ses=session['id']
-    if param == None:
-        sron=str('team_fecha_'+ronda)
-        ron=str('fecha_'+ronda)
-        rond=ronda
-    else:
-        rond=str(int(ronda)+param)
-        sron=str('team_fecha_'+rond)
-        ron=str('fecha_'+rond)
-    cur.execute(fQuery %(sron,ses))
-    plantilla=cur.fetchone()
+    try:
+        if param == None:
+            sron=str('team_fecha_'+ronda)
+            ron=str('fecha_'+ronda)
+            rond=ronda
+        else:
+            rond=str(int(ronda)+param)
+            sron=str('team_fecha_'+rond)
+            ron=str('fecha_'+rond)
+        cur.execute(fQuery %(sron,ses))
+        plantilla=cur.fetchone()
+        if param == None:
+            sron=str('team_'+ronda)
+            ron=str('fecha_'+ronda)
+            rond=ronda
+        else:
+            rond=str(int(ronda)+param)
+            sron=str('team_fecha_'+rond)
+            ron=str('fecha_'+rond)
+        cur.execute(fQuery %(sron,ses))
+        plantilla=cur.fetchone()
+        ron_id=str('fecha_'+rond+'.team')
+        ron_pl=str('fecha_'+rond+'.player_id')
+    except:
+        st=ronda
+        sta=st.split()
+        print('sta', sta, 'ronda', ronda)
+        try:
+            stag=sta[2].split('-')
+            stage=stag[0]
+        except:
+            stage=sta[2]
+        print(stage)
+        print('entra a except:', ronda)
+        if param == None:
+            sron=str('team_'+stage)
+            ron=str(stage)
+            rond=stage
+        else:
+            if param == 1:
+                if stage=='Finals': stage=stage
+                elif stage=='Semi': stage='Finals'
+                elif stage=='Quarter': stage='Semi'
+            sron=str(stage)
+            stron=str('team_'+stage)
+            ron=str(stage)
+            rond=stage
+        cur.execute(fQuery %(stron,ses))
+        plantilla=cur.fetchone()
+        ron_id=str(rond+'.team')
+        ron_pl=str(rond+'.player_id')
+
     if plantilla[0] == None:
         cur.execute(sQuery %(ses))
         plantilla=cur.fetchone()
@@ -137,8 +180,7 @@ def carga_equipo(param):
     D1=dicequipo['D1'];D2=dicequipo['D2'];D3=dicequipo['D3'];D4=dicequipo['D4'];D5=dicequipo['D5']
     M1=dicequipo['M1'];M2=dicequipo['M2'];M3=dicequipo['M3'];M4=dicequipo['M4'];M5=dicequipo['M5']
     A1=dicequipo['A1'];A2=dicequipo['A2'];A3=dicequipo['A3']
-    ron_id=str('fecha_'+rond+'.team')
-    ron_pl=str('fecha_'+rond+'.player_id')
+    
     dQuery="""SELECT teams.logo,%s.name,player_id,team,pos,pts,imbat,gol,pen,asis,ta,tr 
                 FROM %s JOIN teams ON %s=teams.teams_id WHERE %s=%s"""
     eQuery="""SELECT teams.logo,dname,players_id,team,pos
@@ -714,24 +756,18 @@ def time_in_range(start, end, current):
 def fechas(now):
     count=0
     app.config['MYSQL_DB'] = 'bolivia2022'
+
+    sQuery="S"
+
+    #Todo esto funciona para (Stage:apertura ; tipo:grupos)
     ahora=now
     antes='2022-01-24T17:01:00'
     fQuery="""SELECT start FROM rounds"""
-    #con_db = sqlite3.connect('fantasydb.sqlite')
-    #cur = con_db.cursor()
     cur = mysql.connection.cursor()
     cur.execute(fQuery)
     rondas=cur.fetchall()
     mysql.connection.commit()
-    #Todo esto deberia llegar de la base de datos llenada por la API pero el futbol nacional es tan chistoso
-    #GW1='2022-02-06T15:00:00'
-    #GW2='2022-02-11T15:00:00'
-    #GW3='2022-02-18T15:00:00'
-    #GW4='2022-02-25T15:00:00'
-    #GW5='2022-03-04T15:00:00'
-    #GW6='2022-03-11T15:00:00'
-    #GW7='2022-04-01T15:00:00'
-    #rondas=GW1,GW2,GW3,GW4,GW5,GW6,GW7
+    
     
     for ronda in rondas:
         ronda=ronda[0].isoformat()
@@ -741,6 +777,51 @@ def fechas(now):
             print(ronda,'Pertenece a fecha-',count)
             count=str(count)
             return count
+
+def fechas_last(now, league_id):
+    count=0
+    app.config['MYSQL_DB'] = 'bolivia2022'
+    cur = mysql.connection.cursor()
+
+    liga=league_id
+    current=dict()
+    conn = http.client.HTTPSConnection("soccer.sportmonks.com")
+    key_tz="?api_token=Sp4hVNvCAOGiMjpKDMWkhVcMmzV7nykqY0Tk3o92NKclrxQrfpFjWu6oFieM"
+
+    headers = {
+        'tz': "America/La_Paz",
+        'include': "country,season,seasons",
+        'x-rapidapi-host': "football-pro.p.rapidapi.com",
+        'x-rapidapi-key': "0329e6e9e8msh13e33172622a180p1ddd31jsnd12defe9b2c5"
+        }
+
+    conn.request("GET", "/api/v2.0/leagues/"+liga+key_tz)
+
+    res= conn.getresponse()
+    data= res.read()
+    json_data= json.loads(data)
+    data=json_data['data']
+
+    current['logo']=data['logo_path']
+    current['season']=data['current_season_id']
+    current['round']=data['current_round_id']
+    current['stage']=data['current_stage_id']
+
+    sQuery="SELECT type,name FROM stages WHERE stages_id=%s"
+    cur.execute(sQuery %current['stage'])
+    actual=cur.fetchone()
+    print(actual)
+    if actual[0] == "Group Stage":
+        
+        fQuery="""SELECT name FROM rounds WHERE rounds_id=%s"""
+        
+        cur.execute(fQuery %current['round'])
+        ronda=cur.fetchone()[0]
+        mysql.connection.commit()
+        return ronda
+    elif actual[0]=="Knock Out":
+        return actual[1]
+
 
 
 def fecha_live():
@@ -1084,33 +1165,60 @@ def API_events():
         players=json_data['data']
         l_lineup=list()
         v_lineup=list()
-        ron=players['round']
-        round=ron['data']
-        p_player=players['events']
-        eventos=p_player['data']
-        line=players['lineup']
-        lineu=line['data']
-        for lineup in lineu:
-            if lineup['team_id']==players['localteam_id']: l_lineup.append(lineup['player_id'])
-            elif lineup['team_id']==players['visitorteam_id']: v_lineup.append(lineup['player_id'])
-        l_lineup=json.dumps(l_lineup)
-        v_lineup=json.dumps(v_lineup)
-        lQuery='UPDATE fixtures SET l_lineup= %s,v_lineup= %s WHERE fixtures_id= %s'
-        cur.execute(lQuery, (l_lineup,v_lineup,int(fixt)))
-        for event in eventos:
-            cQuery='''INSERT INTO events
-                (events_id,team_id,type,fixt_id,play_a,a_name,play_b,b_name,min,inj,result,round_id) 
-                VALUES 
-                (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-                ON DUPLICATE KEY UPDATE
-                team_id=%s,type=%s,fixt_id=%s,play_a=%s,a_name=%s,play_b=%s,b_name=%s,min=%s,inj=%s,result=%s,round_id=%s;'''
-            
-            cur.execute(cQuery, (event['id'],event['team_id'],event['type'],event['fixture_id'],
-            event['player_id'],event['player_name'],event['related_player_id'],
-            event['related_player_name'],event['minute'],event['injuried'],event['result'],round['id'],
-            event['team_id'],event['type'],event['fixture_id'],
-            event['player_id'],event['player_name'],event['related_player_id'],
-            event['related_player_name'],event['minute'],event['injuried'],event['result'],round['id'] ))
+        try:
+            ron=players['round']
+            round=ron['data']
+            p_player=players['events']
+            eventos=p_player['data']
+            line=players['lineup']
+            lineu=line['data']
+            for lineup in lineu:
+                if lineup['team_id']==players['localteam_id']: l_lineup.append(lineup['player_id'])
+                elif lineup['team_id']==players['visitorteam_id']: v_lineup.append(lineup['player_id'])
+            l_lineup=json.dumps(l_lineup)
+            v_lineup=json.dumps(v_lineup)
+            lQuery='UPDATE fixtures SET l_lineup= %s,v_lineup= %s WHERE fixtures_id= %s'
+            cur.execute(lQuery, (l_lineup,v_lineup,int(fixt)))
+            for event in eventos:
+                cQuery='''INSERT INTO events
+                    (events_id,team_id,type,fixt_id,play_a,a_name,play_b,b_name,min,inj,result,round_id) 
+                    VALUES 
+                    (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    ON DUPLICATE KEY UPDATE
+                    team_id=%s,type=%s,fixt_id=%s,play_a=%s,a_name=%s,play_b=%s,b_name=%s,min=%s,inj=%s,result=%s,round_id=%s;'''
+                
+                cur.execute(cQuery, (event['id'],event['team_id'],event['type'],event['fixture_id'],
+                event['player_id'],event['player_name'],event['related_player_id'],
+                event['related_player_name'],event['minute'],event['injuried'],event['result'],round['id'],
+                event['team_id'],event['type'],event['fixture_id'],
+                event['player_id'],event['player_name'],event['related_player_id'],
+                event['related_player_name'],event['minute'],event['injuried'],event['result'],round['id'] ))
+        except:
+            p_player=players['events']
+            eventos=p_player['data']
+            line=players['lineup']
+            lineu=line['data']
+            for lineup in lineu:
+                if lineup['team_id']==players['localteam_id']: l_lineup.append(lineup['player_id'])
+                elif lineup['team_id']==players['visitorteam_id']: v_lineup.append(lineup['player_id'])
+            l_lineup=json.dumps(l_lineup)
+            v_lineup=json.dumps(v_lineup)
+            lQuery='UPDATE fixtures SET l_lineup= %s,v_lineup= %s WHERE fixtures_id= %s'
+            cur.execute(lQuery, (l_lineup,v_lineup,int(fixt)))
+            for event in eventos:
+                cQuery='''INSERT INTO events
+                    (events_id,team_id,type,fixt_id,play_a,a_name,play_b,b_name,min,inj,result) 
+                    VALUES 
+                    (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    ON DUPLICATE KEY UPDATE
+                    team_id=%s,type=%s,fixt_id=%s,play_a=%s,a_name=%s,play_b=%s,b_name=%s,min=%s,inj=%s,result=%s;'''
+                
+                cur.execute(cQuery, (event['id'],event['team_id'],event['type'],event['fixture_id'],
+                event['player_id'],event['player_name'],event['related_player_id'],
+                event['related_player_name'],event['minute'],event['injuried'],event['result'],
+                event['team_id'],event['type'],event['fixture_id'],
+                event['player_id'],event['player_name'],event['related_player_id'],
+                event['related_player_name'],event['minute'],event['injuried'],event['result']))
     mysql.connection.commit()
      
 def API_rounds():
@@ -1119,8 +1227,11 @@ def API_rounds():
     app.config['MYSQL_DB'] = torneo
     cur = mysql.connection.cursor()
     mQuery="SELECT name FROM rounds"
+    sQuery="SELECT name FROM stages"
     cur.execute(mQuery)
     rondas=cur.fetchall()
+    cur.execute(sQuery)
+    stages=cur.fetchall()
     yQuery="""ALTER TABLE registrados ADD COLUMN IF NOT EXISTS team_%s VARCHAR(500);"""
     aQuery='''CREATE TABLE IF NOT EXISTS %s (
         player_id INT PRIMARY KEY,
@@ -1148,6 +1259,30 @@ def API_rounds():
         GW= str('fecha_'+ronda[0])
         cur.execute(aQuery %GW)
         cur.execute(yQuery %GW)
+    for stage in stages:
+        print(stage[0])
+        lista=list()
+        GW= stage[0]
+        lista=GW.split()
+        try:
+            cur.execute(aQuery %GW)
+            cur.execute(yQuery %GW)
+        except:
+            print(lista[0],',', lista[1],',',lista[2])
+            print(lista[2])
+            clave=lista[2].split('-')
+            sta1=clave[0]+'1'
+            sta2=clave[0]+'2'
+            print(clave)
+            cur.execute(aQuery %clave[0])
+            cur.execute(yQuery %clave[0])
+            cur.execute(aQuery %sta1)
+            cur.execute(yQuery %sta1)
+            cur.execute(aQuery %sta2)
+            cur.execute(yQuery %sta2)
+        
+    
+
     mysql.connection.commit()
 
 def API_last_season():
@@ -1608,6 +1743,7 @@ def calc_pts_job(partido):
    
       
 def rpuntos():
+    #Obtiene la totalidad de rondas y stages de la sesion (liga en curso en el año actual)
     global torneo
     conn = http.client.HTTPSConnection("soccer.sportmonks.com")
     key_tz="&tz=America/La_Paz&api_token=Sp4hVNvCAOGiMjpKDMWkhVcMmzV7nykqY0Tk3o92NKclrxQrfpFjWu6oFieM"
@@ -1615,14 +1751,15 @@ def rpuntos():
     cur = mysql.connection.cursor()
     eQuery="SELECT rounds_id,name FROM rounds"
     mQuery="SELECT fixtures_id FROM fixtures WHERE round=%s"
-    rQuery="SELECT name FROM rounds WHERE rounds_id=%s"
     cur.execute(eQuery)
     rounds=cur.fetchall()
+    
+
     for round in rounds:
+        #obtiene fixt y nombre de la ronda, via API obiene info de cada fixt, y llena tablas --> fecha_x
         cur.execute(mQuery %round[0])
         fix_list=cur.fetchall()
-        cur.execute(rQuery %round[0])
-        n_round=cur.fetchone()
+        
         for fixt in fix_list:
             fix=str(fixt[0])
             conn.request("GET", "/api/v2.0/fixtures/"+fix+"?include=lineup,bench"+key_tz)
@@ -1632,7 +1769,8 @@ def rpuntos():
             players=json_data['data']
             line=players['lineup']
             lineu=line['data']
-            
+            bench=players['bench']
+            benchd=bench['data']
             for lineup in lineu:
                 partido=list()
                 jugador=lineup['player_id']
@@ -1665,6 +1803,40 @@ def rpuntos():
                 ta,tr,imbat,concedidos,autogol,pen_scored,pen_missed,pen_saved,puntos,
                 name,pos,team,int(round[0]),fix,min,gol,asis,
                 ta,tr,imbat,concedidos,autogol,pen_scored,pen_missed,pen_saved,puntos))
+
+            for suplent in benchd:
+                partido=list()
+                jugador=lineup['player_id']
+                team=lineup['team_id']
+                name=lineup['player_name']
+                stats=lineup['stats']
+                goals=stats['goals']
+                gol=goals['scored']
+                asis=goals['assists']
+                concedidos=goals['conceded']
+                autogol=goals['owngoals']
+                cards=stats['cards']
+                ta=cards['yellowcards']
+                tr=cards['redcards']
+                other=stats['other']
+                pen_scored=other['pen_scored']
+                pen_missed=other['pen_missed']
+                pen_saved=other['pen_saved']
+                min=other['minutes_played']
+                partido=(fixt[0],jugador,min,gol,asis,concedidos,autogol,ta,tr,pen_scored,pen_missed,pen_saved)
+                puntos,imbat,pos=calc_pts(partido)
+                bQuery='''INSERT INTO fecha_%s (player_id,name,pos,team,round_id,
+                fix_id,min,gol,asis,ta,tr,imbat,conced,autog,pen,pen_mis,pen_sav,pts) 
+                VALUES 
+                (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                ON DUPLICATE KEY UPDATE
+                name=%s,pos=%s,team=%s,round_id=%s,fix_id=%s,min=%s,gol=%s,asis=%s,ta=%s,tr=%s,imbat=%s,
+                conced=%s,autog=%s,pen=%s,pen_mis=%s,pen_sav=%s,pts=%s;'''
+                cur.execute(bQuery, (int(round[1]),jugador,name,pos,team,int(round[0]),fix,min,gol,asis,
+                ta,tr,imbat,concedidos,autogol,pen_scored,pen_missed,pen_saved,puntos,
+                name,pos,team,int(round[0]),fix,min,gol,asis,
+                ta,tr,imbat,concedidos,autogol,pen_scored,pen_missed,pen_saved,puntos))
+                
     hQuery='''CREATE TABLE IF NOT EXISTS puntos (
         login_id INT UNIQUE PRIMARY KEY,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -1677,7 +1849,110 @@ def rpuntos():
     for ronda in rondas:
         GW= str('fecha_'+ronda[0])
         cur.execute(yQuery %GW)
-    mysql.connection.commit()
+
+    sQuery="SELECT stages_id,name FROM stages"
+    tQuery="SELECT fixtures_id FROM fixtures WHERE stage=%s"
+    gQuery="SELECT name FROM stages WHERE stages_id=%s"
+    cur.execute(sQuery)
+    stages=cur.fetchall()
+    print('stages',stages)
+    for stage in stages:
+        try:
+            st=stage[1]
+            sta=st.split()
+            stag=sta[2].split('-')
+            print(stag[0])
+            yQuery="""ALTER TABLE puntos ADD COLUMN IF NOT EXISTS pts_%s INT;"""
+            cur.execute(yQuery %stag[0])
+            cur.execute(tQuery %stage[0])
+            fix_list=cur.fetchall()
+            print(fix_list)
+        except:
+            print('tiene rondas')
+            continue
+        for fixt in fix_list:
+            fix=str(fixt[0])
+            print('fix: ', fix)
+            conn.request("GET", "/api/v2.0/fixtures/"+fix+"?include=lineup,bench"+key_tz)
+            res = conn.getresponse()
+            data= res.read()
+            json_data= json.loads(data)
+            players=json_data['data']
+            line=players['lineup']
+            lineu=line['data']
+            bench=players['bench']
+            benchd=bench['data']
+            for lineup in lineu:
+                partido=list()
+                jugador=lineup['player_id']
+                team=lineup['team_id']
+                name=lineup['player_name']
+                stats=lineup['stats']
+                goals=stats['goals']
+                gol=goals['scored']
+                asis=goals['assists']
+                concedidos=goals['conceded']
+                autogol=goals['owngoals']
+                cards=stats['cards']
+                ta=cards['yellowcards']
+                tr=cards['redcards']
+                other=stats['other']
+                pen_scored=other['pen_scored']
+                pen_missed=other['pen_missed']
+                pen_saved=other['pen_saved']
+                min=other['minutes_played']
+                partido=(fixt[0],jugador,min,gol,asis,concedidos,autogol,ta,tr,pen_scored,pen_missed,pen_saved)
+                puntos,imbat,pos=calc_pts(partido)
+                nombre_tabla=stag[0]
+                bQuery='''INSERT INTO {} (player_id,name,pos,team,
+                fix_id,min,gol,asis,ta,tr,imbat,conced,autog,pen,pen_mis,pen_sav,pts) 
+                VALUES 
+                (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                ON DUPLICATE KEY UPDATE
+                name=%s,pos=%s,team=%s,fix_id=%s,min=%s,gol=%s,asis=%s,ta=%s,tr=%s,imbat=%s,
+                conced=%s,autog=%s,pen=%s,pen_mis=%s,pen_sav=%s,pts=%s;'''.format(nombre_tabla)
+                print('stag[0]',stag[0])
+                cur.execute(bQuery, [jugador,name,pos,team,fix,min,gol,asis,
+                ta,tr,imbat,concedidos,autogol,pen_scored,pen_missed,pen_saved,puntos,
+                name,pos,team,fix,min,gol,asis,
+                ta,tr,imbat,concedidos,autogol,pen_scored,pen_missed,pen_saved,puntos])
+
+            for suplent in benchd:
+                partido=list()
+                jugador=suplent['player_id']
+                team=suplent['team_id']
+                name=suplent['player_name']
+                stats=suplent['stats']
+                goals=stats['goals']
+                gol=goals['scored']
+                asis=goals['assists']
+                concedidos=goals['conceded']
+                autogol=goals['owngoals']
+                cards=stats['cards']
+                ta=cards['yellowcards']
+                tr=cards['redcards']
+                other=stats['other']
+                pen_scored=other['pen_scored']
+                pen_missed=other['pen_missed']
+                pen_saved=other['pen_saved']
+                min=other['minutes_played']
+                partido=(fixt[0],jugador,min,gol,asis,concedidos,autogol,ta,tr,pen_scored,pen_missed,pen_saved)
+                puntos,imbat,pos=calc_pts(partido)
+                nombre_tabla=stag[0]
+                bQuery='''INSERT INTO {} (player_id,name,pos,team,
+                fix_id,min,gol,asis,ta,tr,imbat,conced,autog,pen,pen_mis,pen_sav,pts) 
+                VALUES 
+                (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                ON DUPLICATE KEY UPDATE
+                name=%s,pos=%s,team=%s,fix_id=%s,min=%s,gol=%s,asis=%s,ta=%s,tr=%s,imbat=%s,
+                conced=%s,autog=%s,pen=%s,pen_mis=%s,pen_sav=%s,pts=%s;'''.format(nombre_tabla)
+                print('stag[0]',stag[0])
+                cur.execute(bQuery, [jugador,name,pos,team,fix,min,gol,asis,
+                ta,tr,imbat,concedidos,autogol,pen_scored,pen_missed,pen_saved,puntos,
+                name,pos,team,fix,min,gol,asis,
+                ta,tr,imbat,concedidos,autogol,pen_scored,pen_missed,pen_saved,puntos])
+                
+        mysql.connection.commit()
 
 def crea_ligas():
     app.config['MYSQL_DB'] = torneo
@@ -1712,6 +1987,28 @@ def crea_ligas():
     for liga in ligas:
         cur.execute(rQuery ,(ses,liga))
     mysql.connection.commit()
+
+def crea_liga_nueva(name):
+    app.config['MYSQL_DB'] = torneo
+    cur = mysql.connection.cursor()
+    
+    iQuery="INSERT INTO Ligas (ligas_id,name, teams) VALUES (NULL,%s,%s)"
+    
+    sQuery="SELECT ligas_id FROM ligas WHERE name=%s"
+    
+    rQuery="INSERT INTO registrado_liga (registrado_id, liga_id) VALUES (%s,%s)"
+    ses=session['id']
+    cur.execute(iQuery ,(name,ses))
+    mysql.connection.commit()
+    liguita=str(name)
+    cur.execute(sQuery ,(liguita,))
+    liga=cur.fetchone()
+    print(liga)
+    cur.execute(rQuery ,(ses,liga))
+    mysql.connection.commit()
+    return(liga)
+
+
 
 def info_liga(registrado):
     app.config['MYSQL_DB'] = torneo
@@ -1763,6 +2060,53 @@ def crea_puntos_ronda():
             jornada='pts_fecha_'+str(i)
             cur.execute(lQuery %(jornada,usuario[0],pts_totales,jornada,pts_totales))
         mysql.connection.commit()
+
+def crea_puntos_stage():
+    app.config['MYSQL_DB'] = torneo
+    cur = mysql.connection.cursor()
+    sQuery="SELECT login_id FROM registrados"
+    cur.execute(sQuery)
+    usuarios=cur.fetchall()
+    gQuery="SELECT stages_id,name FROM stages"
+    tQuery="SELECT team FROM registrados WHERE login_id=%s"
+    pQuery="SELECT pts FROM %s WHERE player_id=%s"
+    lQuery="""INSERT INTO puntos (login_id, %s) VALUES (%s,%s) 
+            ON DUpLICATE KEY UPDATE
+            %s=%s;"""
+    cur.execute(gQuery)
+    stages=cur.fetchall()
+    for stage in stages:
+        print(stage[1])
+        try:
+            GW= stage[1]
+            lista=GW.split()
+            clave=lista[2].split('-')
+            for usuario in usuarios:
+                pts_totales=0
+                equipo=dict()
+                cur.execute(tQuery %usuario)
+                equipo_json=cur.fetchone()
+                equipo=json.loads(equipo_json[0])
+                print(equipo)
+                fecha=str(clave[0])
+                for k,v in equipo.items():
+                    if k!='suplentes':
+                        cur.execute(pQuery %(fecha,v))
+                        pts_jug_stage=cur.fetchone()
+                        if pts_jug_stage == None: pts_jug_stage='0'
+                        
+                        pts_totales+=int(pts_jug_stage[0])
+                    else: print('suplentes wasitos')
+                print('El equipo ', usuario[0],' hizo ',pts_totales,' puntos en la fase',(fecha))
+                GW= ronda
+                lista=GW.split()
+                clave=lista[2].split('-')
+                jornada='pts_'+str(clave[0])
+                cur.execute(lQuery %(jornada,usuario[0],pts_totales,jornada,pts_totales))
+        except: print('tiene rondas')
+        
+    mysql.connection.commit()
+
 
 
 
@@ -1886,7 +2230,8 @@ def inicio():
         #----------------------Nombre del torneo! importante para toda la temporada----------------
         torneo = 'bolivia2022'
         ahora=datetime.datetime.now().isoformat()
-        ronda=fechas(ahora)
+        liga='1098'
+        ronda=fechas_last(ahora,liga)
        
         return render_template('inicio.html', ronda=ronda)
         
@@ -2792,8 +3137,24 @@ def adminTasks():
 
 @app.route("/adminTPuntos",methods=["POST","GET"])
 def adminTPuntos():
-    crea_puntos_ronda()
-    return render_template('adminGMD.html')
+    try:
+        crea_puntos_ronda()
+        return render_template('adminGMD.html')
+    except:
+        crea_puntos_stage()
+        return render_template('adminGMD.html')
+
+@app.route("/crea_liga_priv",methods=["POST","GET"])
+def crea_liga_priv():
+    nombre_liga = request.form['nombre_nueva_liga']
+    liga_creada=crea_liga_nueva(nombre_liga)
+    print('Se creo la liga',liga_creada)
+    ahora=datetime.datetime.now().isoformat()
+    ronda=fechas(ahora)
+    ses=session['id']
+    ligas=info_liga(ses)
+    return render_template('ligas.html', ronda=ronda, ligas=ligas)
+
 
 
 
