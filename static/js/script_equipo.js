@@ -1,5 +1,8 @@
-//Script filtro tabla-->
+
+          
           $(document).ready(function(){
+            guardado=true;
+            //Script filtro tabla-->
             $("input:checkbox").on("change", function () {
               $("input:checkbox").not(this).prop('checked', false)
               if( $(this).is(':checked') ){
@@ -8,20 +11,25 @@
               } else { 
                 $("#tabla td.col3:not(:contains('" + $(this).val() + "'))").parent().show();
               }
-          });   
+            });
+            
+            
         }); 
 
 //Script Formacion-->
           var form;
           var titu;
           var supl;
+          var capi;
           $(document).ready(function(){
+            
               $.ajax({
                     url: '/ajaxequipo',
-                    type: 'get',
+                    type: 'post',
+                    data: {ses:ses},
                     success: function(response){ 
                       supl = response.supl;
-                      
+                      capi = response.capi;
                       $.each(supl, function(indice, elemento){
                         sup=$('.row_cancha').find('img[data-usr^="'+elemento+'"]').closest('.cuadro_contenedor');
                         sup_btn=$('.row_cancha').find('img[data-usr^="'+elemento+'"]').closest('.jugador_ico');
@@ -29,6 +37,10 @@
                         sup_btn.addClass('cuadro_int_sup');
                         sup.appendTo('#suplente_'+indice);
                       });
+                      img_cap=$(document).find("img[data-usr='"+capi+"']");
+                      cuadro_cap=img_cap.closest('.cuadro_contenedor');
+                      cuadro_cap.prepend("<img src='static/images/capitan.png' alt='capitan' id='img_capi' class='img-fluid rounded'  data-usr='"+capi+"'>");
+                      
 
                         
                     }
@@ -47,7 +59,7 @@
     });
   })
 
-//Script para mostrar modal con datos de jugador, y pasar datos al botonsus-->
+//Script para mostrar modal con datos de jugador, y pasar datos al botonsus y botoncapitan-->
         var divid;
         var comodin = false;
         var debanca = false; 
@@ -55,21 +67,34 @@
           
           $('.jugador_ico').click(function(){
             debanca = false; 
-            if($(this).hasClass('cuadro_int_sup')){debanca = true;};
+            
             if (comodin == true){
               comodin = false;
               return false}
+            
             $('.cuadro_int_bench_des').hide();
             var userid = $(this).find('#img_cambiada').data('usr');
             var userpos = $(this).find('#img_cambiada').data('pos');
             divid = $(this).closest('.cuadro_contenedor');
+            if(userid==capi){
+              $('.botonsus').addClass("disabledbutton");
+              $('.botoncapitan').addClass("disabledbutton"); }
+            else{
+              $('.botonsus').removeClass("disabledbutton");
+              $('.botoncapitan').removeClass("disabledbutton");}
+            if($(this).hasClass('cuadro_int_sup')){
+              debanca = true;
+              $('.botoncapitan').addClass("disabledbutton");
+            };
             $('.botonsus').attr("data-usr", userid);
             $('.botonsus').attr("data-pos", userpos);
-            
+            $('.botoncapitan').attr("data-usr", userid);
+           
             $('#empModal').on('hidden.bs.modal', function() {
               $('.botonsus').removeAttr("data-usr");
               $('.botonsus').removeAttr("data-pos");
-              
+              $('.botoncapitan').removeAttr("data-usr");
+              $('.botoncapitan').removeClass("disabledbutton");
               
             });
                 $.ajax({
@@ -89,6 +114,7 @@
 //Script cuando se hace click en botonsus-->
         $(document).ready(function(){
          $('.botonsus').click( function(){
+            guardado=false;
             console.log('debanca' , debanca);
             var user = $(this).attr('data-usr');
             var userpos_a = $(this).attr('data-pos');       
@@ -96,7 +122,6 @@
             var sup_def = $('.cuadro_int_bench_des').find('img[data-pos^="D"]').closest('.suplente_int');
             var sup_med = $('.cuadro_int_bench_des').find('img[data-pos^="M"]').closest('.suplente_int');
             var sup_ata = $('.cuadro_int_bench_des').find('img[data-pos^="A"]').closest('.suplente_int');
-            console.log(sup_ata.length)
             comodin = true;
             var user_b; 
             var saltar_paso = false;
@@ -148,13 +173,19 @@
                 divid.find('.jugador_ico').removeClass('cuadro_int')
                 divid.find('.jugador_ico').addClass('cuadro_int_sup')
                 divid.appendTo(sup_entra);
+                if(user==capi){
+                  capi=user_b;
+                  $('#img_capi').remove();
+                  $(this).prepend("<img src='static/images/capitan.png' alt='capitan' id='img_capi' class='img-fluid rounded'  data-usr='"+capi+"'>");
+                }
 
                 $.ajax({
                 url: '/ajaxchange',
                 type: 'post',
-                data:  {user_a: user, user_b: user_b},
+                data:  {user_a: user, user_b: user_b, capi:capi},
                 success: function(){
-                console.log('Player Change')
+                console.log('Jugador Cambiado');
+                
                 }
               });
 
@@ -163,6 +194,9 @@
               
             }
             else{
+              img_cap=$(document).find("img[data-usr='"+capi+"']");
+              cuadro_cap=img_cap.closest('.cuadro_contenedor');
+              cuadro_cap.addClass("disabledbutton");
               if(userpos_a=='POR'){
                 $('#row_ATA').addClass("disabledbutton");
                 $('#row_MED').addClass("disabledbutton");
@@ -213,9 +247,9 @@
                 $.ajax({
                 url: '/ajaxchange',
                 type: 'post',
-                data:  {user_a: user_b, user_b: user},
+                data:  {user_a: user_b, user_b: user, capi:capi},
                 success: function(){
-                console.log('Player Change')
+                console.log('Jugador Cambiado')
                 }
               });
               };
@@ -233,7 +267,6 @@
               $('.cuadro_int_bench_des').hide(800);
               divid_sup=undefined;
               userpos_a=undefined;
-              console.log('paso');
               $('.jugador_ico').off('click',change);
 
             });  
@@ -241,18 +274,43 @@
         
         });
 
+//Script para nombrar capitan
+$(document).ready(function(){
+  $('.botoncapitan').click(function(){
+    console.log('debanca' , debanca);
+    var user = $(this).attr('data-usr');
+    $('#empModal').on('hidden.bs.modal', function() {
+      var user = undefined;
+    });
+    $('#empModal').modal('hide');
+      if(debanca==false){
+        $('#img_capi').remove();
+        divid.prepend("<img src='static/images/capitan.png' alt='capitan' id='img_capi' class='img-fluid rounded'  data-usr='"+user+"'>");
+        capi=user;
+      }
+      else{
+        $('#empModal').on('hidden.bs.modal', function() {
+          $('.botoncapitan').removeClass("disabledbutton");
+        });
+      }
+    }); 
+  });
+
+
 //Script para guardar cambios-->
         $(document).ready(function(){
           $('.btn_guardar').click(function(){
-            $.ajax({
-            url: '/ajaxchange',
-            type: 'post',
-            data:  {user_a: 'guardar'},
-            success: function (response) {
-              alert(response.msg);
-              location.reload;
-            }
-        });
+            guardado=true;
+              $.ajax({
+                url: '/ajaxchange',
+                type: 'post',
+                data:  {user_a: 'guardar',capi:capi},
+                success: function (response) {
+                  alert(response.msg);
+                  location.reload;
+                  }
+                });
+            
           })
         })
 
@@ -268,7 +326,6 @@
         $('#btn_'+POS).find('br').remove();
         $('.img_'+POS).remove();
         $('#'+POS).show("img");
-        console.log(userid, team_price, price);
 
         $.ajax({
             url: '/ajaxrem',
@@ -294,6 +351,8 @@
             });
             });
           }); 
+
+
 
 //Script para crear equipo
         $(document).ready(function(){
@@ -343,10 +402,13 @@
 });
 
 //Script para prevenir salida de pagina luego de interactuar un poco-->
+      
         window.addEventListener("beforeunload", (evento) => {
             if (true) {
-                evento.preventDefault();
+              if (guardado==false){
+                evento.preventDefault();}
                 evento.returnValue = "";
                 return "";
             }
         });
+      

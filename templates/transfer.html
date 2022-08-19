@@ -8,7 +8,7 @@
             </div>
               
             <div class="input-group-prepend" id="columnapresupuesto">
-              <span class="input-group-text"> &nbsp; Presupuesto: &nbsp; <b id="campopresupuesto">90</b> MBs</span>
+              <span class="input-group-text"> &nbsp; Presupuesto: &nbsp; <b id="campopresupuesto">80</b> MBs</span>
             </div>            
             
             
@@ -39,7 +39,7 @@
                     <div class="column cuadro_contenedor"></div>
                     <div class="column cuadro_contenedor"></div>
                   </div>
-                  <div class="row_cancha" id="row_Ata">
+                  <div class="row_cancha" id="row_ATA">
                     <div class="column cuadro_contenedor " id="cuadro_A3">
                       <div class="casilla" id="casilla_A3">
                         <button id="btn_A3" class="jugador_ico cuadro_int">
@@ -65,7 +65,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row_cancha" id="row_Med">
+                  <div class="row_cancha" id="row_MED">
                     <div class="column cuadro_contenedor" id="cuadro_M5">
                       <div class="casilla" id="casilla_M5">
                         <button id="btn_M5" class="jugador_ico cuadro_int">
@@ -107,7 +107,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row_cancha" id="row_Def">
+                  <div class="row_cancha" id="row_DEF">
                     <div class="column cuadro_contenedor" id="cuadro_D5"> 
                       <div class="casilla" id="casilla_D5">
                         <button id="btn_D5" class="jugador_ico cuadro_int">
@@ -149,7 +149,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row_cancha" id="row_Por">
+                  <div class="row_cancha" id="row_POR">
                     <div class="column cuadro_contenedor" id="cuadro_P1">
                       <div class="casilla" id="casilla_P1">
                         <button id="btn_P1" class="jugador_ico cuadro_int">
@@ -203,6 +203,9 @@
               
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary botoncapitan"><span class="material-icons md-24">
+                  copyright
+                  </span>&nbsp; Capitan</button>
                 <button type="button" class="btn btn-primary botonsus"><span class="material-icons md-24">
                   change_circle
                   </span>&nbsp; Sustituir</button>
@@ -275,29 +278,27 @@
                     </fieldset> 
                     <table class="tablesorter-ice tablesorter tabla-fija" id="tabla">
                       <thead class="table-dark">
-                        
+                  
                         <tr>
                           <th scope="col1"> </th>
-                          <th scope="col2">Jugador</th>
+                          <th scope="col2">Jugador/Club</th>
                           <th scope="col3" class="sortable">Pos</th>
-                          <th scope="col4">Equipo</th>
-                          <th scope="col5">Pts</th>
-                          <th scope="col6">Precio</th>
+                          <th scope="col4">Pts</th>
+                          <th scope="col5">Precio</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for jugador in jugadores %}
                         <tr>
                           <td scope="col1"><button class="boton-info botoninfo btn_{{jugador[0]}}" data-id='{{jugador[0]}}' id="btn_{{jugador[0]}}" team= "{{jugador[7]}}" name= "{{jugador[2]}}" price="{{jugador[5]}}" timage="{{jugador[8]}}"><img src= {{jugador[1]}} class="img-responsive img-rounded" id="foto_jugador"></button></td>
-                          <td scope="col2"><button class="boton-info botoninfo btn_{{jugador[0]}}" data-id='{{jugador[0]}}' id="btn_{{jugador[0]}}" team= "{{jugador[7]}}" name= "{{jugador[2]}}" price="{{jugador[5]}}" timage="{{jugador[8]}}">{{jugador[2]}}</button></td>
+                          <td scope="col2"><button class="boton-info botoninfo btn_{{jugador[0]}}" data-id='{{jugador[0]}}' id="btn_{{jugador[0]}}" team= "{{jugador[7]}}" name= "{{jugador[2]}}" price="{{jugador[5]}}" timage="{{jugador[8]}}">{{jugador[2]}}<br><b>Club: {{jugador[6]}}</b></button></td>
                           <td scope="col3" class="col3">{{jugador[3]}}</td>
-                          <td scope="col4">{{jugador[6]}}</td>
-                          <td scope="col5">{{jugador[4]}}</td>
-                          <td scope="col6">{{jugador[5]}}</td>
+                          <td scope="col4">{{jugador[4]}}</td>
+                          <td scope="col5">{{jugador[5]}}</td>
                         
                         </tr>
-                          {% endfor %}
-                        </tbody>                
+                        {% endfor %}
+                      </tbody>                   
                     </table>
                   </div>
                   </div>
@@ -305,6 +306,7 @@
               
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                
                 
                 <button type="button" class="btn btn-primary botontransfin"><span class="material-icons md-24">
                   compare_arrows
@@ -336,7 +338,9 @@
 
 
 
-
+        <script> 
+          ses="{{ses}}";
+        </script> 
 <script src="static/js/script_transfer.js"></script>
 
 

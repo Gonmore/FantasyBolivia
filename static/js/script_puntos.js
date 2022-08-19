@@ -2,17 +2,25 @@
           var form;
           var titu;
           var suplentes;
+          var capi;
           $(document).ready(function(){
             var suple= $('#supl_equipo').data('supl');
             var suplentes= suple.replace("[","").replace("]","").split(',');
+            var capitan= $('#supl_equipo').data('capi');
               $.ajax({
                     url: '/ajaxequipo',
-                    type: 'get',
+                    type: 'post',
+                    data: {ses:ses},
                     success: function(response){ 
                       supl = response.supl;
-                      console.log(suple);
-                      console.log('suplentes: ', suplentes);
-                      console.log('supl: ', supl);
+                      img_cap=$(document).find("img[data-usr='"+capitan+"']");
+                      cuadro_cap=img_cap.closest('.cuadro_contenedor');
+                      cuadro_cap.prepend("<img src='/static/images/capitan.png' alt='capitan' id='img_capi' class='img-fluid rounded'  data-usr='"+capitan+"'>");
+                      
+                      pts_capi=cuadro_cap.find('.pts-jug');
+                      puntos_capi=parseInt(pts_capi.text())*(2);
+
+                      pts_capi.text(puntos_capi);
                       $.each(suplentes, function(indice, elemento){
                         sup=$('.row_cancha').find('img[data-usr^='+elemento+']').closest('.cuadro_contenedor');
                         sup_btn=$('.row_cancha').find('img[data-usr^='+elemento+']').closest('.jugador_ico');
@@ -63,11 +71,13 @@
               
               
             });
+            var jor = $('.btn-next').data("jor");
+            console.log(jor)
                 $.ajax({
-                    url: '/ajaxfile',
+                    url: "/ajaxfile_pts",
                     type: 'post',
                     cache: false,
-                    data: {userid: userid},
+                    data: {userid:userid , jor:jor},
                     success: function(data){ 
                         $('.modal-body').html(data); 
                         $('.modal-body').append(data.htmlresponse);
@@ -79,30 +89,34 @@
 
 
 
-//Script para mostrar opcion change
-  $(document).ready(function() {
-    $('.cuadro_contenedor').hover(function(e) {
-      $(this).find('.btn-change').show();  
-    },
-    function() {
-      $(this).find('.btn-change').hide();
-    }
-    );
-    $('.suplente_int').hover(function(e) {
-      $(this).find('.btn-change').show();  
-    },
-    function() {
-      $(this).find('.btn-change').hide();
-    }
-    );
-    
-});
-
-
 //Script para redireccionar a liga
   $(document).ready(function(){
     $('.btn_liga').click(function(){
       var liga = $(this).data("liga");
       window.location.href="/liga/"+liga;
+    })
+  })
+
+  //Script para ver puntos de otras jornadas
+  $(document).ready(function(){
+    $('.btn-next').click(function(){
+      var jor = $(this).data("jor");
+      jor=jor+1
+      if (jor>ron){
+        alert('La jornada '+jor+' aun no se jugo!');
+        return false;
+      }
+      window.location.href="/pu/"+ses+"/"+jor;
+      
+    })
+    $('.btn-prev').click(function(){
+      var jor = $(this).data("jor");
+      jor=jor-1
+      if (jor==0){
+        alert('No existen jornadas anteriores');
+        return false;
+
+      }
+      window.location.href="/pu/"+ses+"/"+jor;
     })
   })

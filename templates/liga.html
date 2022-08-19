@@ -1,32 +1,79 @@
 {% extends '/base.html' %}
 {% block content %}
-
+        
         <main>
+          <div>
           <p class="h1 titulo_liga">LIGA {{nombre}}</p>
           <h1></h3>
+            <div class="col-md-auto">
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <a href="#" class="btn-prev btn-secondary btn-lg " role="button" data-jor="{{ron}}" data-ses="{{ses}}" aria-disabled="false">ANT</a>
+                <a href="#" class="btn btn-primary btn-lg disabled" role="button" aria-disabled="true">JORNADA {{ron}} </a>
+                <a href="#" class="btn-next btn-secondary btn-lg " role="button" data-jor="{{ron}}" data-ses="{{ses}}" aria-disabled="true">SIG</a>
+              </div>
           <table class="table table-hover tabla_liga">
             <thead>
               <tr>
-                
+                <th scope="col">Rank</th>
                 <th scope="col">Nombre</th>
-                <th scope="col">Puntos</th>
+                <th scope="col">Fecha {{ron}}</th>
+                <th scope="col">Pts totales</th>
               </tr>
             </thead>
             <tbody>
               {% for liga in ligas %}
               <tr>
-                <td><button class="btn_liga" data-liga="{{liga[0]}}">{{liga[1]}}</button></td>
-                <th scope="row">{{liga[2]}}</th>
+                <th scope="row">{{liga[0]}}</th>
+                <td><button class="btn_liga" data-liga="{{liga[1]}}">{{liga[2]}}</button></td>
+                <th scope="row">{{liga[4]}}</th>
+                <th scope="row">{{liga[3]}}</th>
               </tr>
               {% endfor %}
             </tbody>
           </table>
+        </div>
+        <span><p>
+          <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+            Codigo de Liga
+          </button>
+        </p>
+        <div style="min-height: 120px;">
+          <div class="collapse collapse-horizontal" id="collapseWidthExample">
+            <div class="card card-body" style="width: 300px;">
+              Enviar este código a los usuarios que se uniran a la liga: {{code}}
+            </div>
+          </div>
+        </div></span>
         </main>
         <script>
+          ron="{{rond}}";
           $(document).ready(function(){
             $('.btn_liga').click(function(){
               var usr = $(this).data("liga");
-              window.location.href="/p/"+usr;
+              window.location.href="/pu/"+usr+"/"+ron;
+            })
+            $('.btn-next').click(function(){
+              var ses= $(this).data("ses");
+              var jor = $(this).data("jor");
+              jor=jor+1
+              if (jor>ron){
+                alert('La jornada '+jor+' aun no se jugo!');
+                return false;
+              }
+              
+              window.location.href="/liga/"+ses+"/"+jor;
+              
+            })
+            $('.btn-prev').click(function(){
+              var ses= $(this).data("ses");
+              var jor = $(this).data("jor");
+              jor=jor-1
+              if (jor==0){
+                alert('No existen jornadas anteriores');
+                return false;
+
+              }
+              window.location.href="/liga/"+ses+"/"+jor;
             })
           })
         </script>      

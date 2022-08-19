@@ -19,7 +19,7 @@ function anchoPage(){
     //Script filtro tabla-->
           var fav
           $(document).ready(function(){
-            
+            guardado=true;
             $("#filter").keyup(function(){
 
                 // Retrieve the input field text and reset the count to zero
@@ -99,10 +99,13 @@ function anchoPage(){
                   });   
                 });
               });
+            
+            
 
     //Script cuando se hace click en botonadd-->
           $(document).ready(function(){
           $('.botonadd').click(async function(){
+            guardado=false;
             var user = $(this).attr('data-usr');
             var team = $(this).attr('data-team');
             var name = $(this).attr('data-name');
@@ -141,11 +144,13 @@ function anchoPage(){
             console.log(POS);
             $('#'+POS).hide("img");
             $('#btn_'+POS).prepend("<img src="+timage+" alt='Micha' id='img_cambiada' class='img-fluid rounded img_"+POS+"' data-usr='"+user+"' data-price='"+price+"' data-team='"+team+"'><b>"+name+"</b><br><b>"+price+"</b>");
-            
+            $('#btn_'+POS).addClass("boton-remp");
+
             $('#empModal').modal('hide');
             $('.btn_'+user).attr("disabled", "disabled");
             $('.btn_'+user).removeClass("boton-info");
-            var pres = 90 - team_price
+            
+            var pres = 80 - team_price
             $('#campopresupuesto').text(pres);
             if (pres<0){
               $('#campopresupuesto').css("color", "red")
@@ -156,36 +161,76 @@ function anchoPage(){
           
           });
 
-    //Script para eliminar jugador-->
-          $(document).ready(function(){
-            $('.btn-close').click(function(){
-              var POS = $(this).attr('data-pos');
-              var userid = $('.img_'+POS).attr('data-usr');
-              var teamid = $('.img_'+POS).attr('data-team');
-              var team_price = parseFloat($('#campopresupuesto').text()) ;
-              var price = parseFloat($('.img_'+POS).attr('data-price'));
-              $('#btn_'+POS).find('b').remove();
-              $('#btn_'+POS).find('br').remove();
-              $('.img_'+POS).remove();
-              $('#'+POS).show("img");
-              console.log(userid, team_price, price);
+              //Script para mostrar modal con datos de jugador, y pasar datos al boton-quitar-->
+              $(document).ready(function(){
+                    
+                $('.cuadro_contenedor').click(function(){ 
+                  console.log('entra remp');   
+                  var imagen=$(this).find('#img_cambiada');
+                  var close=$(this).find('.btn-close');
+                  var userid = imagen.data('usr');
+                  var teamid = imagen.data("team");
+                  var price = imagen.data('price');
+                  var team_price = parseFloat($('#campopresupuesto').text()) ;
+                  var posicion=close.data('pos');
+                  console.log(userid,teamid,price,team_price,posicion);
+                  $('.botonquitar').attr("data-usr", userid);
+                  $('.botonquitar').attr("data-team", teamid);
+                  $('.botonquitar').attr("data-price", price);
+                  $('.botonquitar').attr("data-pos", posicion);
+                  $('#rempModal').on('hidden.bs.modal', function() {
+                    $('.botonquitar').removeAttr("data-usr");
+                    $('.botonquitar').removeAttr("data-team");
+                    $('.botonquitar').removeAttr("data-price");
+                    $('.botonquitar').removeAttr("data-pos");
+                  });
+                      $.ajax({
+                          url: '/ajaxfile',
+                          type: 'post',
+                          cache: false,
+                          data: {userid: userid},
+                          success: function(data){ 
+                              $('.modal-body').html(data); 
+                              $('.modal-body').append(data.htmlresponse);
+                              $('#rempModal').modal('show'); 
+                          }
+                      });   
+                    });
+                  });
 
-              $.ajax({
-                  url: '/ajaxrem',
-                  type: 'post',
-                  data:  {userpos: POS, price: price, team: teamid},
-              });
-              $('.btn_'+userid).removeAttr("disabled", "disabled");
-              $('.btn_'+userid).addClass("boton-info");
-              var pres = team_price + price;
-              $('#campopresupuesto').text(pres)
-              if (pres>0){ $('#campopresupuesto').css("color", "black") }
-            });
-          });
+    //Script para eliminar jugador con modal-->
+    $(document).ready(function(){
+      $('.botonquitar').click(function(){
+        var POS = $(this).attr('data-pos');
+        var userid = $(this).attr('data-usr');
+        var teamid = $(this).attr('data-team');
+        var team_price = parseFloat($('#campopresupuesto').text()) ;
+        var price = parseFloat($(this).attr('data-price'));
+        $('#btn_'+POS).find('b').remove();
+        $('#btn_'+POS).find('br').remove();
+        $('.img_'+POS).remove();
+        $('#'+POS).show("img");
+        console.log(userid, team_price, price);
+
+        $.ajax({
+            url: '/ajaxrem',
+            type: 'post',
+            data:  {userpos: POS, price: price, team: teamid},
+        });
+        $('.btn_'+userid).removeAttr("disabled", "disabled");
+        $('.btn_'+userid).addClass("boton-info");
+        var pres = team_price + price;
+        $('#campopresupuesto').text(pres)
+        $('#rempModal').modal('hide');
+        if (pres>0){ $('#campopresupuesto').css("color", "black") }
+      });
+    });
+
 
     //Script para mostrar modal para reiniciar equipo-->
           $(document).ready(function(){
             $('.btn_reiniciar').click(function(){
+              guardado=true;
               
               $('#altModal').modal('show');
               $('#altModal').find('.botonelimina').click(function(){
@@ -200,6 +245,7 @@ function anchoPage(){
           var verif = 0;
           $(document).ready(function(){
             $('.btn_creaequipo').click( function(){
+              
               var nameteam = $('#nombre_equipo').val();
               
               if (nameteam == ''){
@@ -218,6 +264,7 @@ function anchoPage(){
                         return false;
                       }
                       if(response.creado==true){
+                        guardado=true;
                         verif=1;
                         window.location='/equipo';}
                       location.reload;
@@ -229,41 +276,31 @@ function anchoPage(){
 
 
 
-    //Script para mostrar opcion de eliminar jugador
-        $(document).ready(function() {
-          $('.cuadro_contenedor').hover(function(e) {
-            $(this).find('.btn-close').show();
-            
-          },
-          function() {
-            $(this).find('.btn-close').hide();
-          }
-          );
-          
-      });
 
     //Script para prevenir salida de pagina luego de interactuar un poco-->
-          if (verif==0){
+          
           window.addEventListener("beforeunload", (evento) => {
-              if (true) {
-                  evento.preventDefault();
-                  evento.returnValue = "";
-                  return "";
-              }
+            if (true) {
+              if (guardado==false){
+                evento.preventDefault();}
+                evento.returnValue = "";
+                return "";
+            }
           });
-          }
+          
     //Script para agregar ordenador en tabla. Jquery y tablesorter plugin needed-->
 
     $(function() {
       $("#tabla").tablesorter({ sortList: [[3,1],[4,0]] });
       });
-  }
-  
-  
-  
-  else{
+    }
+    
+    
+    
+    else{
     $(document).ready(function(){
     function muestratabla(that){
+        guardado=true;
         $('.filtro_pos').prop('checked', false);
         var imv=$(this);
         var last_reemp=$(that).attr('data-pos');
@@ -399,6 +436,7 @@ function anchoPage(){
   //Script cuando se hace click en botonadd-->
         $(document).ready(function(){
         $('.botonadd').click(async function(){
+          guardado=false
           var user = $(this).attr('data-usr');
           var team = $(this).attr('data-team');
           var name = $(this).attr('data-name');
@@ -441,7 +479,7 @@ function anchoPage(){
           $('#empModal').modal('hide');
           $('.btn_'+user).attr("disabled", "disabled");
           $('.btn_'+user).removeClass("boton-info");
-          var pres = 90 - team_price
+          var pres = 80 - team_price
           $('#campopresupuesto').text(pres);
           if (pres<0){
             $('#campopresupuesto').css("color", "red")
@@ -479,9 +517,38 @@ function anchoPage(){
           });
         });
 
+   //Script para eliminar jugador con modal-->
+        $(document).ready(function(){
+          $('.botonquitar').click(function(){
+            var POS = $(this).attr('data-pos');
+            var userid = $(this).attr('data-usr');
+            var teamid = $(this).attr('data-team');
+            var team_price = parseFloat($('#campopresupuesto').text()) ;
+            var price = parseFloat($(this).attr('data-price'));
+            $('#btn_'+POS).find('b').remove();
+            $('#btn_'+POS).find('br').remove();
+            $('.img_'+POS).remove();
+            $('#'+POS).show("img");
+            console.log(userid, team_price, price);
+
+            $.ajax({
+                url: '/ajaxrem',
+                type: 'post',
+                data:  {userpos: POS, price: price, team: teamid},
+            });
+            $('.btn_'+userid).removeAttr("disabled", "disabled");
+            $('.btn_'+userid).addClass("boton-info");
+            var pres = team_price + price;
+            $('#campopresupuesto').text(pres)
+            $('#rempModal').modal('hide');
+            if (pres>0){ $('#campopresupuesto').css("color", "black") }
+          });
+        });
+
   //Script para mostrar modal para reiniciar equipo-->
         $(document).ready(function(){
           $('.btn_reiniciar').click(function(){
+            guardado=true;
             
             $('#altModal').modal('show');
             $('#altModal').find('.botonelimina').click(function(){
@@ -493,7 +560,6 @@ function anchoPage(){
       
 
   //Script para guardar  equipo-->
-        var verif = 0;
         $(document).ready(function(){
           $('.btn_creaequipo').click( function(){
             var nameteam = $('#nombre_equipo').val();
@@ -514,7 +580,7 @@ function anchoPage(){
                       return false;
                     }
                     if(response.creado==true){
-                      verif=1;
+                      guardado=true;
                       window.location='/equipo';}
                     location.reload;
                   }
@@ -525,29 +591,17 @@ function anchoPage(){
 
 
 
-  //Script para mostrar opcion de eliminar jugador
-      $(document).ready(function() {
-        $('.cuadro_contenedor').hover(function(e) {
-          $(this).find('.btn-close').show();
-          
-        },
-        function() {
-          $(this).find('.btn-close').hide();
-        }
-        );
-        
-    });
-
   //Script para prevenir salida de pagina luego de interactuar un poco-->
-        if (verif==0){
+        
         window.addEventListener("beforeunload", (evento) => {
-            if (true) {
-                evento.preventDefault();
-                evento.returnValue = "";
-                return "";
-            }
+          if (true) {
+            if (guardado==false){
+              evento.preventDefault();}
+              evento.returnValue = "";
+              return "";
+          }
         });
-        }
+        
   //Script para agregar ordenador en tabla. Jquery y tablesorter plugin needed-->
 
   $(function() {

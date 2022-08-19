@@ -5,13 +5,20 @@
     var titu;
     var supl;
     var pres;
+    var ses;
+    var capi;
     $(document).ready(function(){
+      
+      console.log(ses);
+      guardado=true;
         $.ajax({
               url: '/ajaxequipo',
-              type: 'get',
+              type: 'post',
+              data: {ses:ses},
               success: function(response){ 
                 supl = response.supl;
-                precio_eq=response.precio_eq;
+                presu=response.presu;
+                capi = response.capi;
                 
                 $.each(supl, function(indice, elemento){
                   sup=$('.row_cancha').find('img[data-usr^="'+elemento+'"]').closest('.cuadro_contenedor');
@@ -20,7 +27,10 @@
                   sup_btn.addClass('cuadro_int_sup');
                   sup.appendTo('#suplente_'+indice);
                 });
-                pres = 90 - precio_eq;
+                img_cap=$(document).find("img[data-usr='"+capi+"']");
+                cuadro_cap=img_cap.closest('.cuadro_contenedor');
+                cuadro_cap.prepend("<img src='static/images/capitan.png' alt='capitan' id='img_capi' class='img-fluid rounded'  data-usr='"+capi+"'>");
+                pres = presu;
                 pres=pres.toFixed(1);
                 $('#campopresupuesto').text(pres);
                 if (pres<0){
@@ -55,27 +65,41 @@
       
       $('.jugador_ico').click(function(){
         debanca = false; 
-        if($(this).hasClass('cuadro_int_sup')){debanca = true;};
         if (comodin == true){
           comodin = false;
           return false}
         $('.cuadro_int_bench_des').hide();
         var userid = $(this).find('#img_cambiada').data('usr');
         var userpos = $(this).find('#img_cambiada').data('pos');
+        var userprice = $(this).find('#img_cambiada').data('price');
         var userpos_team= $(this).find('.img_reemplazo').attr('id');
         divid = $(this).closest('.cuadro_contenedor');
+        if(userid==capi){
+          $('.botonsus').addClass("disabledbutton");
+          $('.botoncapitan').addClass("disabledbutton"); }
+        else{
+          $('.botonsus').removeClass("disabledbutton");
+          $('.botoncapitan').removeClass("disabledbutton");}
+        if($(this).hasClass('cuadro_int_sup')){
+          debanca = true;
+          $('.botoncapitan').addClass("disabledbutton");
+        };
         $('.botonsus').attr("data-usr", userid);
         $('.botonsus').attr("data-pos", userpos);
         $('.botontransf').attr("data-usr", userid);
         $('.botontransf').attr("data-pos", userpos);
         $('.botontransf').attr("data-pt", userpos_team);
+        $('.botontransf').attr("data-price", userprice);
+        $('.botoncapitan').attr("data-usr", userid);
         
         $('#empModal').on('hidden.bs.modal', function() {
           $('.botonsus').removeAttr("data-usr");
           $('.botonsus').removeAttr("data-pos");
           $('.botontransf').removeAttr("data-usr");
           $('.botontransf').removeAttr("data-pos");
-          
+          $('.botontransf').removeAttr("data-price");
+          $('.botoncapitan').removeAttr("data-usr");
+          $('.botoncapitan').removeClass("disabledbutton");
           
         });
             $.ajax({
@@ -93,171 +117,204 @@
         });
 
 //Script cuando se hace click en botonsus-->
-    $(document).ready(function(){
-      $('.botonsus').click( function(){
-        console.log('debanca' , debanca);
-        var user = $(this).attr('data-usr');
-        var userpos_a = $(this).attr('data-pos');       
-        var sup_por = $('.cuadro_int_bench_des').find('img[data-pos^="P"]').closest('.suplente_int');
-        var sup_def = $('.cuadro_int_bench_des').find('img[data-pos^="D"]').closest('.suplente_int');
-        var sup_med = $('.cuadro_int_bench_des').find('img[data-pos^="M"]').closest('.suplente_int');
-        var sup_ata = $('.cuadro_int_bench_des').find('img[data-pos^="A"]').closest('.suplente_int');
-        console.log(sup_ata.length)
-        comodin = true;
-        var user_b; 
-        var saltar_paso = false;
-        var POS = 
+$(document).ready(function(){
+  $('.botonsus').click( function(){
+     guardado=false;
+     console.log('debanca' , debanca);
+     var user = $(this).attr('data-usr');
+     var userpos_a = $(this).attr('data-pos');       
+     var sup_por = $('.cuadro_int_bench_des').find('img[data-pos^="P"]').closest('.suplente_int');
+     var sup_def = $('.cuadro_int_bench_des').find('img[data-pos^="D"]').closest('.suplente_int');
+     var sup_med = $('.cuadro_int_bench_des').find('img[data-pos^="M"]').closest('.suplente_int');
+     var sup_ata = $('.cuadro_int_bench_des').find('img[data-pos^="A"]').closest('.suplente_int');
+     comodin = true;
+     var user_b; 
+     var saltar_paso = false;
+     var POS = 
+     $('#empModal').on('hidden.bs.modal', function() {
+         var user = undefined;
+         var userpos_a = undefined;
+
+       });
+     if(debanca==false){
+       if(userpos_a=='POR'){
+         sup_ata.addClass("disabledbutton");
+         sup_med.addClass("disabledbutton");
+         sup_def.addClass("disabledbutton");
+         $('.jugador_ico').on('click', function(){
+           $(".cuadro_contenedor").removeClass("disabledbutton");
+           sup_ata.removeClass("disabledbutton");
+           sup_med.removeClass("disabledbutton");
+           sup_def.removeClass("disabledbutton");
+           $('.cuadro_int_bench_des').hide(800);
+           
+         })
+
+       } 
+       if(userpos_a=='DEF'){
+         sup_por.addClass("disabledbutton");
+         if(sup_def.length>=2){sup_med.addClass("disabledbutton");sup_ata.addClass("disabledbutton")}
+       }
+       if(userpos_a=='MED'){
+         sup_por.addClass("disabledbutton");
+         if(sup_med.length>=2){sup_def.addClass("disabledbutton");sup_ata.addClass("disabledbutton")}
+       }
+       if(userpos_a=='ATA'){
+         sup_por.addClass("disabledbutton");
+         if(sup_ata.length>=2){sup_def.addClass("disabledbutton");sup_med.addClass("disabledbutton")}
+       }
+       $('#empModal').modal('hide');
+       muestrasuplentes();
+       $(".row_cancha > .cuadro_contenedor").addClass("disabledbutton");
+       divid.removeClass('disabledbutton');
+
+       function change(){
+         var entra=$(this).find('#img_cambiada').attr('data-pos');
+         var user_b=$(this).find('#img_cambiada').attr('data-usr');
+         var sup_entra=$(this).closest('.suplente_int')
+         $(this).removeClass('cuadro_int_sup');
+         $(this).addClass('cuadro_int');
+         sup_entra.contents().appendTo('#row_'+entra);
+         divid.find('.jugador_ico').removeClass('cuadro_int')
+         divid.find('.jugador_ico').addClass('cuadro_int_sup')
+         divid.appendTo(sup_entra);
+         if(user==capi){
+           capi=user_b;
+           $('#img_capi').remove();
+           $(this).prepend("<img src='static/images/capitan.png' alt='capitan' id='img_capi' class='img-fluid rounded'  data-usr='"+capi+"'>");
+         }
+
+         $.ajax({
+         url: '/ajaxchange',
+         type: 'post',
+         data:  {user_a: user, user_b: user_b, capi:capi},
+         success: function(){
+         console.log('Jugador Cambiado');
+         
+         }
+       });
+
+       } 
+       $('.jugador_ico').on('click', change);
+       
+     }
+     else{
+      img_cap=$(document).find("img[data-usr='"+capi+"']");
+      cuadro_cap=img_cap.closest('.cuadro_contenedor');
+      cuadro_cap.addClass("disabledbutton");
+       if(userpos_a=='POR'){
+         $('#row_ATA').addClass("disabledbutton");
+         $('#row_MED').addClass("disabledbutton");
+         $('#row_DEF').addClass("disabledbutton");
+         $('.jugador_ico').on('click', function(){
+           $(".cuadro_contenedor").removeClass("disabledbutton");
+           $('#row_ATA').removeClass("disabledbutton");
+           $('#row_MED').removeClass("disabledbutton");
+           $('#row_DEF').removeClass("disabledbutton");
+           $('#row_POR').removeClass("disabledbutton");
+           $('.cuadro_int_bench_des').hide(800);
+           
+         })
+
+       } 
+       if(userpos_a=='DEF'){
+         $('#row_POR').addClass("disabledbutton");
+         if(sup_med.length>=2){$('#row_MED').addClass("disabledbutton")}
+         if(sup_ata.length>=2){$('#row_ATA').addClass("disabledbutton")}
+       }
+       if(userpos_a=='MED'){
+         $('#row_POR').addClass("disabledbutton");
+         if(sup_def.length>=2){$('#row_DEF').addClass("disabledbutton")}
+         if(sup_ata.length>=2){$('#row_ATA').addClass("disabledbutton")}
+       }
+       if(userpos_a=='ATA'){
+         $('#row_POR').addClass("disabledbutton");
+         if(sup_def.length>=2){$('#row_DEF').addClass("disabledbutton")}
+         if(sup_med.length>=2){$('#row_MED').addClass("disabledbutton")}
+       }
+       $('#empModal').modal('hide');
+       muestrasuplentes();
+       $(".suplente_int > .cuadro_contenedor").addClass("disabledbutton");
+       divid.removeClass('disabledbutton');
+
+       function change() {
+         var divid_sup = divid.closest('.suplente_int');
+         var entra=$(this).find('#img_cambiada').attr('data-pos');
+         var user_b=$(this).find('#img_cambiada').attr('data-usr');
+         var sup_entra=$(this).closest('.cuadro_contenedor');
+         divid.find('.jugador_ico').removeClass('cuadro_int_sup');
+         divid.find('.jugador_ico').addClass('cuadro_int');
+         divid_sup.contents().appendTo('#row_'+userpos_a);
+         $(this).removeClass('cuadro_int');
+         $(this).addClass('cuadro_int_sup');
+         sup_entra.appendTo(divid_sup);
+
+         $.ajax({
+         url: '/ajaxchange',
+         type: 'post',
+         data:  {user_a: user_b, user_b: user, capi:capi},
+         success: function(){
+         console.log('Jugador Cambiado')
+         }
+       });
+       };
+       $('.jugador_ico').on('click', change);
+     }
+
+     $('.jugador_ico').on('click', function(){
+       
+       $(".cuadro_contenedor").removeClass("disabledbutton");
+       $('.row_cancha').removeClass("disabledbutton");
+       $('#suplente_0').removeClass("disabledbutton");
+       $('#suplente_1').removeClass("disabledbutton");
+       $('#suplente_2').removeClass("disabledbutton");
+       $('#suplente_3').removeClass("disabledbutton");
+       $('.cuadro_int_bench_des').hide(800);
+       divid_sup=undefined;
+       userpos_a=undefined;
+       $('.jugador_ico').off('click',change);
+
+     });  
+ });
+ 
+ });
+
+//Script para nombrar capitan
+$(document).ready(function(){
+  $('.botoncapitan').click(function(){
+    console.log('debanca' , debanca);
+    var user = $(this).attr('data-usr');
+    $('#empModal').on('hidden.bs.modal', function() {
+      var user = undefined;
+    });
+    $('#empModal').modal('hide');
+      if(debanca==false){
+        $('#img_capi').remove();
+        divid.prepend("<img src='static/images/capitan.png' alt='capitan' id='img_capi' class='img-fluid rounded'  data-usr='"+user+"'>");
+        capi=user;
+      }
+      else{
         $('#empModal').on('hidden.bs.modal', function() {
-            var user = undefined;
-            var userpos_a = undefined;
+          $('.botoncapitan').removeClass("disabledbutton");
+        });
+      }
+    }); 
+  });
 
-          });
-        if(debanca==false){
-          if(userpos_a=='Por'){
-            sup_ata.addClass("disabledbutton");
-            sup_med.addClass("disabledbutton");
-            sup_def.addClass("disabledbutton");
-            $('.jugador_ico').on('click', function(){
-              $(".cuadro_contenedor").removeClass("disabledbutton");
-              sup_ata.removeClass("disabledbutton");
-              sup_med.removeClass("disabledbutton");
-              sup_def.removeClass("disabledbutton");
-              $('.cuadro_int_bench_des').hide(800);
-              
-            })
-
-          } 
-          if(userpos_a=='Def'){
-            sup_por.addClass("disabledbutton");
-            if(sup_def.length>=2){sup_med.addClass("disabledbutton");sup_ata.addClass("disabledbutton")}
-          }
-          if(userpos_a=='Med'){
-            sup_por.addClass("disabledbutton");
-            if(sup_med.length>=2){sup_def.addClass("disabledbutton");sup_ata.addClass("disabledbutton")}
-          }
-          if(userpos_a=='Ata'){
-            sup_por.addClass("disabledbutton");
-            if(sup_ata.length>=2){sup_def.addClass("disabledbutton");sup_med.addClass("disabledbutton")}
-          }
-          $('#empModal').modal('hide');
-          muestrasuplentes();
-          $(".row_cancha > .cuadro_contenedor").addClass("disabledbutton");
-          divid.removeClass('disabledbutton');
-
-          function change(){
-            var entra=$(this).find('#img_cambiada').attr('data-pos');
-            var user_b=$(this).find('#img_cambiada').attr('data-usr');
-            var sup_entra=$(this).closest('.suplente_int')
-            $(this).removeClass('cuadro_int_sup');
-            $(this).addClass('cuadro_int');
-            sup_entra.contents().appendTo('#row_'+entra);
-            divid.find('.jugador_ico').removeClass('cuadro_int')
-            divid.find('.jugador_ico').addClass('cuadro_int_sup')
-            divid.appendTo(sup_entra);
-
-            $.ajax({
-            url: '/ajaxchange',
-            type: 'post',
-            data:  {user_a: user, user_b: user_b},
-            success: function(){
-            console.log('Player Change')
-            }
-          });
-
-          } 
-          $('.jugador_ico').on('click', change);
-          
-        }
-        else{
-          if(userpos_a=='Por'){
-            $('#row_Ata').addClass("disabledbutton");
-            $('#row_Med').addClass("disabledbutton");
-            $('#row_Def').addClass("disabledbutton");
-            $('.jugador_ico').on('click', function(){
-              $(".cuadro_contenedor").removeClass("disabledbutton");
-              $('#row_Ata').removeClass("disabledbutton");
-              $('#row_Med').removeClass("disabledbutton");
-              $('#row_Def').removeClass("disabledbutton");
-              $('#row_Por').removeClass("disabledbutton");
-              $('.cuadro_int_bench_des').hide(800);
-              
-            })
-
-          } 
-          if(userpos_a=='Def'){
-            $('#row_Por').addClass("disabledbutton");
-            if(sup_med.length>=2){$('#row_Med').addClass("disabledbutton")}
-            if(sup_ata.length>=2){$('#row_Ata').addClass("disabledbutton")}
-          }
-          if(userpos_a=='Med'){
-            $('#row_Por').addClass("disabledbutton");
-            if(sup_def.length>=2){$('#row_Def').addClass("disabledbutton")}
-            if(sup_ata.length>=2){$('#row_Ata').addClass("disabledbutton")}
-          }
-          if(userpos_a=='Ata'){
-            $('#row_Por').addClass("disabledbutton");
-            if(sup_def.length>=2){$('#row_Def').addClass("disabledbutton")}
-            if(sup_med.length>=2){$('#row_Med').addClass("disabledbutton")}
-          }
-          $('#empModal').modal('hide');
-          muestrasuplentes();
-          $(".suplente_int > .cuadro_contenedor").addClass("disabledbutton");
-          divid.removeClass('disabledbutton');
-
-          function change() {
-            var divid_sup = divid.closest('.suplente_int');
-            var entra=$(this).find('#img_cambiada').attr('data-pos');
-            var user_b=$(this).find('#img_cambiada').attr('data-usr');
-            var sup_entra=$(this).closest('.cuadro_contenedor');
-            divid.find('.jugador_ico').removeClass('cuadro_int_sup');
-            divid.find('.jugador_ico').addClass('cuadro_int');
-            divid_sup.contents().appendTo('#row_'+userpos_a);
-            $(this).removeClass('cuadro_int');
-            $(this).addClass('cuadro_int_sup');
-            sup_entra.appendTo(divid_sup);
-
-            $.ajax({
-            url: '/ajaxchange',
-            type: 'post',
-            data:  {user_a: user_b, user_b: user},
-            success: function(){
-            console.log('Player Change')
-            }
-          });
-          };
-          $('.jugador_ico').on('click', change);
-        }
-
-        $('.jugador_ico').on('click', function(){
-          
-          $(".cuadro_contenedor").removeClass("disabledbutton");
-          $('.row_cancha').removeClass("disabledbutton");
-          $('#suplente_0').removeClass("disabledbutton");
-          $('#suplente_1').removeClass("disabledbutton");
-          $('#suplente_2').removeClass("disabledbutton");
-          $('#suplente_3').removeClass("disabledbutton");
-          $('.cuadro_int_bench_des').hide(800);
-          divid_sup=undefined;
-          userpos_a=undefined;
-          console.log('paso');
-          $('.jugador_ico').off('click',change);
-
-        });  
-    });
-    
-    });
 
 //Script cuando se hace click en botontransf-->
     $(document).ready(function(){
     $('.botontransf').click( function(){
-     
+      guardado=false;
       var user = $(this).attr('data-usr');
       var userpos_a = $(this).attr('data-pos');
+      var userprice=$(this).attr('data-price');
       var POS =$(this).attr('data-pt');
-      var toptions= '<button class="btn_return" type="button" data-toggle="tooltip" data-user="'+user+'"  data-placement="bottom" title="Recuperar jugador"><span class="material-icons md-20">compare_arrows</button><button type="button" class="btn_transf" data-toggle="tooltip" data-placement="bottom" title="Buscar reemplazo"><span class="material-icons md-20">person_search</button>' 
+      var toptions= '<button class="btn_return" type="button" data-toggle="tooltip" data-user="'+user+'" data-price="'+userprice+'"  data-placement="bottom" title="Recuperar jugador"><span class="material-icons md-20">compare_arrows</button><button type="button" class="btn_transf" data-toggle="tooltip" data-placement="bottom" title="Buscar reemplazo"><span class="material-icons md-20">person_search</button>' 
       $('#empModal').on('hidden.bs.modal', function() {
             var user = undefined;
             var userpos_a = undefined;
+            var userprice = undefined;
             
 
           });
@@ -278,17 +335,19 @@
         data: {operacion: 'carga', POS: POS},
         success: function(response){ 
           equipo = response.equipo;
-          precio_eq = response.precio_eq
           $.each(equipo, function(indice, elemento){
             sup=$('table').find('button[data-id^="'+elemento+'"]').closest('tr');
             sup.addClass('disabledbutton');
           });
-          pres = 90 - precio_eq;
+          pres = parseFloat(pres) + parseFloat(userprice);
           pres=pres.toFixed(1);
           $('#campopresupuesto').text(pres);
           if (pres<0){
                 $('#campopresupuesto').css("color", "red")
               }
+          if (pres>=0){
+            $('#campopresupuesto').css("color", "black")
+          }
         }
        });
 
@@ -349,6 +408,7 @@
       function recupera(){
         reemp=$(this).closest('.casilla');
         ret_usr = $(this).attr('data-user');
+        ret_price = $(this).attr('data-price');
         console.log('entra_ret', ret_usr);
         var recu=reemp.find('.img_reemplazo').attr('id');
         reemp.find('.jugador_ico_transf').removeClass('disabledbutton');
@@ -373,7 +433,7 @@
               sup=$('table').find('button[data-id^="'+elemento+'"]').closest('tr');
               sup.addClass('disabledbutton');
             });
-            pres = 90 - precio_eq;
+            pres = parseFloat(pres) - parseFloat(userprice);
             pres=pres.toFixed(1);
             $('#campopresupuesto').text(pres);
             if (pres<0){
@@ -420,17 +480,10 @@
               data: {operacion: 'carga', POS: posi},
               success: function(response){ 
                 equipo = response.equipo;
-                precio_eq = response.precio_eq
                 $.each(equipo, function(indice, elemento){
                   sup=$('table').find('button[data-id^="'+elemento+'"]').closest('tr');
                   sup.addClass('disabledbutton');
                 });
-                pres = 90 - precio_eq;
-                pres=pres.toFixed(1);
-                $('#campopresupuesto').text(pres);
-                if (pres<0){
-                      $('#campopresupuesto').css("color", "red")
-                    }
               }
           });
       }
@@ -507,14 +560,13 @@
         var cant = undefined;
         var cantidad = undefined;
         var timage = undefined;
-        console.log(user);
       });
     if(cantidad >= 3){alert('Ta tienes 3 jugadores del club ......')}
     else{
           await $.ajax({
           url: '/ajaxcompra',
           type: 'post',
-          data:  {userid: user},
+          data:  {userid: user, capi:capi},
           success: function (response) {
             
             if (response.msg != undefined) {
@@ -528,7 +580,6 @@
           });
         if(saltar_paso == true) { return false;}
         else {
-          console.log(POS);
           $('#'+POS).hide("#img_cambiada");
           var btn_entra = $('#btn_'+POS).closest('button');
           var casilla_entra = btn_entra.closest('.casilla');
@@ -548,6 +599,7 @@
           var fila_entra=$('.btn_'+user).closest('tr');
           fila_entra.addClass('disabledbutton');
           pres = pres - price
+          pres=pres.toFixed(1);
           $('#campopresupuesto').text(pres);
           if (pres<0){
             $('#campopresupuesto').css("color", "red")
@@ -563,10 +615,11 @@
 //Script para guardar cambios-->
     $(document).ready(function(){
       $('.btn_guardar').click(function(){
+        guardado=true;
         $.ajax({
         url: '/ajaxcompra',
         type: 'post',
-        data:  {user_a: 'crear'},
+        data:  {userid: 'crear',capi:capi,pres:pres},
         success: function (response) {
           if (response.msg != undefined) {
                       alert(response.msg);
@@ -612,10 +665,9 @@
  //-Script para mostrar modal para reiniciar equipo-->
     $(document).ready(function(){
       $('.btn_reiniciar').click(function(){
-        
+        guardado=true;
         $('#altModal').modal('show');
         $('#altModal').find('.botonelimina').click(function(){
-          
           location.reload();
         });
         });
@@ -632,7 +684,8 @@ $(function() {
 //Script para prevenir salida de pagina luego de interactuar un poco-->
       window.addEventListener("beforeunload", (evento) => {
           if (true) {
-              evento.preventDefault();
+              if (guardado==false){
+              evento.preventDefault();}
               evento.returnValue = "";
               return "";
           }

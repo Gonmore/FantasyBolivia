@@ -2,6 +2,19 @@
 {% block content %}
 
         <main>
+          <div>
+          <aside>{%with messages = get_flashed_messages(with_categories=true)%}
+            {%if messages %}
+                
+                    {%for category, message in messages%}
+                        <div class="alert {{category}}" id="idMensajeError">
+                                <strong>Info!</strong> {{message}} 
+                        </div>
+                    {%endfor%}
+                {%endif%}
+            {%endwith%}
+          </aside>
+        </div>
           <p>
             <a class="btn btn-primary" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Crear liga privada</a>
             <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Unirse a liga privada</button>
@@ -12,20 +25,8 @@
               <div class="collapse multi-collapse" id="multiCollapseExample1">
                 <div class="card card-body">
                   <form action="/crea_liga_priv" class="formulario_admin" method="POST">
-                    <input type="text" class="form-control" name="nombre_nueva_liga" placeholder="Nombre de liga">
+                    <input type="text" class="form-control" name="nombre_nueva_liga" placeholder="Nombre de liga" required="">
                     <button type="submit" class="btn btn-secondary">Crear</button>
-                    
-                    <aside>{%with messages = get_flashed_messages(with_categories=true)%}
-                      {%if messages %}
-                          
-                              {%for category, message in messages%}
-                                  <div class="alert {{category}}" id="idMensajeError">
-                                          <strong>Info!</strong> {{message}} 
-                                  </div>
-                              {%endfor%}
-                          {%endif%}
-                      {%endwith%}
-                    </aside>
                   </form>
                 </div>
               </div>
@@ -35,20 +36,10 @@
                 <div class="card card-body">
                   <div class="card card-body">
                     <form action="/ingresa_liga" class="formulario_admin" method="POST">
-                      <input type="text" class="form-control" name="nombre_liga" placeholder="Código de liga">
+                      <input type="text" class="form-control" name="codigo_liga" placeholder="Código de liga" required="">
                       <button type="submit" class="btn btn-secondary">Unirse</button>
                       
-                      <aside>{%with messages = get_flashed_messages(with_categories=true)%}
-                        {%if messages %}
-                            
-                                {%for category, message in messages%}
-                                    <div class="alert {{category}}" id="idMensajeError">
-                                            <strong>Info!</strong> {{message}} 
-                                    </div>
-                                {%endfor%}
-                            {%endif%}
-                        {%endwith%}
-                      </aside>
+                      
                     </form>
                   </div>
                 </div>
@@ -75,9 +66,10 @@
         </main>
         <script>
           $(document).ready(function(){
+            ron="{{ronda}}";
             $('.btn_liga').click(function(){
               var liga = $(this).data("liga");
-              window.location.href="/liga/"+liga;
+              window.location.href="/liga/"+liga+"/"+(ron-1);
             })
           })
         </script>     
