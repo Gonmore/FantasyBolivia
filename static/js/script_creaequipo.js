@@ -489,6 +489,43 @@ function anchoPage(){
         });
         
         });
+  
+   //Script para mostrar modal con datos de jugador, y pasar datos al boton-quitar-->
+   $(document).ready(function(){
+                    
+    $('.cuadro_contenedor').click(function(){ 
+      console.log('entra remp');   
+      var imagen=$(this).find('#img_cambiada');
+      var close=$(this).find('.btn-close');
+      var userid = imagen.data('usr');
+      var teamid = imagen.data("team");
+      var price = imagen.data('price');
+      var team_price = parseFloat($('#campopresupuesto').text()) ;
+      var posicion=close.data('pos');
+      console.log(userid,teamid,price,team_price,posicion);
+      $('.botonquitar').attr("data-usr", userid);
+      $('.botonquitar').attr("data-team", teamid);
+      $('.botonquitar').attr("data-price", price);
+      $('.botonquitar').attr("data-pos", posicion);
+      $('#rempModal').on('hidden.bs.modal', function() {
+        $('.botonquitar').removeAttr("data-usr");
+        $('.botonquitar').removeAttr("data-team");
+        $('.botonquitar').removeAttr("data-price");
+        $('.botonquitar').removeAttr("data-pos");
+      });
+          $.ajax({
+              url: '/ajaxfile',
+              type: 'post',
+              cache: false,
+              data: {userid: userid},
+              success: function(data){ 
+                  $('.modal-body').html(data); 
+                  $('.modal-body').append(data.htmlresponse);
+                  $('#rempModal').modal('show'); 
+              }
+          });   
+        });
+      });
 
   //Script para eliminar jugador-->
         $(document).ready(function(){

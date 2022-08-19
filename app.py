@@ -2625,7 +2625,7 @@ def registrar():
         
         app.config['MYSQL_DB'] = 'dbapp'
         #prepara el query
-        sQuery = "INSERT into Login (correo, password, nombre, tipo) VALUES (%s, %s, %s, %s)"
+        sQuery = "INSERT into login (correo, password, nombre, tipo) VALUES (%s, %s, %s, %s)"
         #crea cursor
         cur = mysql.connection.cursor()
         #Ejecuta
