@@ -2511,6 +2511,7 @@ def inicio():
     if 'nombre' in session:
         #----------------------Nombre del torneo! importante para toda la temporada----------------
         torneo = 'clausura22'
+        app.config['MYSQL_DB'] = torneo
         ahora=datetime.datetime.now().isoformat()
         liga='1098'
         ronda=fechas_last(ahora,liga)
@@ -2688,10 +2689,10 @@ def ingresar():
 @app.route("/fantasy")
 def fantasy():
     global torneo
-    
+    app.config['MYSQL_DB'] = torneo
     if 'nombre' in session:
         
-        app.config['MYSQL_DB'] = torneo
+        
         cur = mysql.connection.cursor()
         sQuery = 'SELECT * FROM registrados WHERE login_id = %s'
         
@@ -2966,6 +2967,7 @@ def ajaxrem():
 # Bloque revision Puntos y cambios en equipo------------------------------------------------
 @app.route("/puntos",methods=["POST","GET"])
 def puntos():
+    global torneo
     jugado=list()
     if 'nombre' in session:
         app.config['MYSQL_DB'] = torneo
