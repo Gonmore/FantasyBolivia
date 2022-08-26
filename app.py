@@ -107,7 +107,9 @@ def abr_pos(pos):
 
 #aun debe revisarse esta parte pensando en la modalidad COPA
 def carga_equipo(param):
-    global ronda
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     no_inscrito=False
     #GW = request.form['GW']
     dicequipo=dict()
@@ -117,6 +119,7 @@ def carga_equipo(param):
     print('ronda', ronda)
     ses=session['id']
     #try:
+    
     if param == None:
         sron=str('team_fecha_'+ronda[1])
         ron=str('fecha_'+ronda[1])
@@ -450,7 +453,9 @@ def carga_equipo(param):
         jugadoA2,jugadoA3,name,dicequipo,capi)
 
 def carga_equipos(param,login_id):
-    global ronda
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
         
     #GW = request.form['GW']
     
@@ -2462,6 +2467,9 @@ def livescores():
 def main():
     #Verifica que haya sesion
     if 'nombre' in session:
+        ahora=datetime.datetime.now().isoformat()
+        liga='1098'
+        ronda=fechas_last(ahora,liga)
         return render_template('inicio.html', ronda=ronda)
     else:
         return render_template('ingresar.html')
@@ -2469,7 +2477,6 @@ def main():
 #Define la ruta de index
 @app.route("/inicio")
 def inicio():
-    global ronda
     if 'nombre' in session:
         #----------------------Nombre del torneo! importante para toda la temporada----------------
         
@@ -2485,7 +2492,9 @@ def inicio():
 @app.route("/ligas")
 def ligas():
     
-    global ronda
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     if 'nombre' in session:
         cur = mysql.connection.cursor()
         ses=session['id']
@@ -2504,7 +2513,9 @@ def ligas():
 @app.route("/liga/<liga_id>/<jornada>/")
 def liga_user(liga_id,jornada):
     
-    global ronda
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     if 'nombre' in session:
         #----------------------Nombre del torneo! importante para toda la temporada----------------
         
@@ -2572,7 +2583,9 @@ def registrar():
     if (request.method=="GET"):
         #accesso no concedido 
         if 'nombre' in session:
-            global ronda
+            ahora=datetime.datetime.now().isoformat()
+            liga='1098'
+            ronda=fechas_last(ahora,liga)
             return render_template('inicio.html', ronda=ronda)
         else:
             return render_template("ingresar.html")
@@ -2603,7 +2616,9 @@ def registrar():
 @app.route("/ingresar", methods=["GET","POST"])
 def ingresar():
     if (request.method=="GET"):
-        global ronda
+        ahora=datetime.datetime.now().isoformat()
+        liga='1098'
+        ronda=fechas_last(ahora,liga)
         if 'nombre' in session:
             return render_template('inicio.html', ronda=ronda)
         else:
