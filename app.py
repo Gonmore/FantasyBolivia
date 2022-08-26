@@ -3295,7 +3295,7 @@ def transfer():
 
 @app.route("/ajaxtransfer",methods=["POST","GET"])
 def ajaxtransfer():
-    
+    lista_eq=["P1","P2","D1","D2","D3","D4","D5","M1","M2","M3","M4","M5","A1","A2","A3","suplentes","capitan"]
     posicion = request.form['POS']
     user_team=dict()
     for key in lista_eq:
@@ -3314,7 +3314,8 @@ def ajaxtransfer():
   
 @app.route("/ajaxrecupera",methods=["POST","GET"])
 def ajaxrecupera():
-    
+    lista_eq=["P1","P2","D1","D2","D3","D4","D5","M1","M2","M3","M4","M5","A1","A2","A3","suplentes","capitan"]
+
     posicion = request.form['POS']
     usr_recu = request.form['usr']
     session[posicion]=usr_recu
@@ -3379,6 +3380,7 @@ def ajaxchange():
 @app.route("/ajaxcompra",methods=["POST","GET"])
 def ajaxcompra():
     global ronda
+    lista_eq=["P1","P2","D1","D2","D3","D4","D5","M1","M2","M3","M4","M5","A1","A2","A3","suplentes","capitan"]
     pos=str()
     userid = request.form['userid']
     capi=request.form['capi']
