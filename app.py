@@ -771,10 +771,10 @@ def carga_equipos(param,login_id):
         jugadoA2,jugadoA3,name,dicequipo,capi)
 
 def carga_dict_equipo(param,login_id):
-    global ronda
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     
-    print(param,login_id)
-    print('ronda: ',ronda)
     #GW = request.form['GW']
     team=dict()
     sQuery = "SELECT team,name,fav FROM registrados WHERE login_id = %s"
@@ -2206,6 +2206,9 @@ def estado_liga(liga_id,jornada):
     
     return(resultado)
 def crea_puntos_ronda():
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     cur = mysql.connection.cursor()
     sQuery="SELECT login_id FROM registrados"
     cur.execute(sQuery)
@@ -2217,7 +2220,6 @@ def crea_puntos_ronda():
     lQuery="""INSERT INTO puntos (login_id, %s) VALUES (%s,%s) 
             ON DUpLICATE KEY UPDATE
             %s=%s;"""
-    print(ronda[1])
     for i in range(1,int(ronda[1])):
         for usuario in usuarios:
             if i==1:
@@ -2297,6 +2299,9 @@ def crea_puntos_ronda():
         mysql.connection.commit()
 
 def crea_puntos_stage():
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     cur = mysql.connection.cursor()
     sQuery="SELECT login_id FROM registrados"
     cur.execute(sQuery)
@@ -2310,7 +2315,6 @@ def crea_puntos_stage():
     cur.execute(gQuery)
     stages=cur.fetchall()
     for stage in stages:
-        print(stage[1])
         try:
             GW= stage[1]
             lista=GW.split()
@@ -2321,7 +2325,6 @@ def crea_puntos_stage():
                 cur.execute(tQuery %usuario)
                 equipo_json=cur.fetchone()
                 equipo=json.loads(equipo_json[0])
-                print(equipo)
                 fecha=str(clave[0])
                 for k,v in equipo.items():
                     if k!='suplentes':
@@ -2535,6 +2538,9 @@ def liga_user(liga_id,jornada):
 
 @app.route("/crea_liga_priv",methods=["POST","GET"])
 def crea_liga_priv():
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     cur = mysql.connection.cursor()
     ses=session['id']
     cQuery="SELECT ligas_id FROM ligas WHERE teams=%s"
@@ -2556,6 +2562,9 @@ def crea_liga_priv():
 
 @app.route("/ingresa_liga",methods=["POST","GET"])
 def ingresa_liga():
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     ses=session['id']
     codigo_liga = request.form['codigo_liga']
     resultado=unirse_liga(codigo_liga)
@@ -2570,7 +2579,9 @@ def ingresa_liga():
 def live():
     
     if 'nombre' in session:
-        
+        ahora=datetime.datetime.now().isoformat()
+        liga='1098'
+        ronda=fechas_last(ahora,liga)
         return render_template('live.html', ronda=ronda)
         
     else:
@@ -2740,7 +2751,9 @@ def ajaxfile():
 
 @app.route("/ajaxadd",methods=["POST","GET"])
 def ajaxadd():
-    global ronda
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     lista_eq=["P1","P2","D1","D2","D3","D4","D5","M1","M2","M3","M4","M5","A1","A2","A3","suplentes","capitan"]
     
     if request.method == 'POST':
@@ -3094,6 +3107,9 @@ def puntos_equipos(login_id,param):
 @app.route("/equipo",methods=["POST","GET"])
 def equipo():
     jugado=list()
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     if 'nombre' in session:
         cur = mysql.connection.cursor()
         sQuery = 'SELECT * FROM registrados WHERE login_id = %s'
@@ -3351,7 +3367,9 @@ def ajaxrecupera():
 
 @app.route("/ajaxchange",methods=["POST","GET"])
 def ajaxchange():
-    global ronda
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     
     ses=session['id']
     play_in = request.form['user_a']
@@ -3364,7 +3382,6 @@ def ajaxchange():
         sQuery= """UPDATE registrados SET ultimo = %s WHERE login_id = %s"""
         
         fQuery= """UPDATE registrados SET %s = '%s' WHERE login_id = %s"""
-        print('ronda ajaxChange:',ronda)
         #crea cursor
         cur = mysql.connection.cursor()
         team['capitan']=capi
@@ -3394,7 +3411,9 @@ def ajaxchange():
 
 @app.route("/ajaxcompra",methods=["POST","GET"])
 def ajaxcompra():
-    global ronda
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     lista_eq=["P1","P2","D1","D2","D3","D4","D5","M1","M2","M3","M4","M5","A1","A2","A3","suplentes","capitan"]
     pos=str()
     userid = request.form['userid']
@@ -3449,7 +3468,9 @@ def ajaxcompra():
 
 @app.route("/cuenta",methods=["POST","GET"])
 def cuenta():
-    global ronda
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     if 'nombre' in session:
         if request.method=='POST':
             
@@ -3468,7 +3489,9 @@ def cuenta():
 # Bloque Administracion de Fantasy---------------------------------------------------------
 @app.route("/adminGMD",methods=["POST","GET"])
 def adminGMD():
-    global ronda
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     if 'nombre' in session:
         if session['tipo']=='administrador':
             if request.method=='POST':
@@ -3520,6 +3543,7 @@ def adminLigas():
 @app.route("/adminTasks",methods=["POST","GET"])
 def adminTasks():
     try:
+        
         #Crea el objeto MySQL
         rondas=fecha_live()
         scheduler = BackgroundScheduler()
