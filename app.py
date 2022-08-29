@@ -116,7 +116,6 @@ def carga_equipo(param):
     sQuery = "SELECT team,name,fav FROM registrados WHERE login_id = %s"
     fQuery = "SELECT %s,name,fav FROM registrados WHERE login_id = %s"
     cur = mysql.connection.cursor()
-    print('ronda', ronda)
     ses=session['id']
     #try:
     
@@ -166,7 +165,6 @@ def carga_equipo(param):
         plantilla=cur.fetchone()
         ron_id=str(rond+'.team')
         ron_pl=str(rond+'.player_id')"""
-    print('Plantilla: ', plantilla)
     if plantilla[0]=='0':
         no_inscrito=True
     if plantilla[0] == None or '0':
@@ -787,19 +785,14 @@ def carga_dict_equipo(param,login_id):
         sron=str('team_fecha_'+ronda[1])
         ron=str('fecha_'+ronda[1])
         rond=ronda[1]
-        print('entra if')
     elif int(para)<=0:
-        print('ronda: ', ronda[1], 'param: ', para)
         rond=str(int(ronda[1])+int(para))
-        print('rond', rond)
         sron=str('team_fecha_'+rond)
         ron=str('fecha_'+rond)
-        print('entra 1er elif')
     elif int(para)>0:
         rond=str(para)
         sron=str('team_fecha_'+rond)
         ron=str('fecha_'+rond)
-        print('entra 2do elif')
 
     cur.execute(fQuery %(sron,ses))
     plantilla=cur.fetchone()
@@ -866,10 +859,8 @@ def fechas(now):
     
     for ronda in rondas:
         rondita=ronda[0].isoformat()
-        print('rondita:',rondita)
         count=count+1
         if(time_in_range(antes,rondita,ahora))==True:
-            print(rondita,'Pertenece a fecha-',count)
             count=str(count)
             return count
 
@@ -913,7 +904,6 @@ def fechas_last(now, league_id):
         upcom=dato['upcoming']
         upcoming=upcom['data']
         next_matches=len(upcoming)
-        print('len upcuming: ', len(upcoming))
         prox_fecha=list()
         try:
             for i in range(8):
@@ -1067,7 +1057,6 @@ def API_season(sesion):
     for round in rounds['data']:
         
         if round['stage_id']==clausura:
-            print('entro')
             cur.execute(cQuery, (round['id'],round['name'],round['stage_id'],round['start'],round['end'],
             round['name'],round['stage_id'],round['start'],round['end'] ))
         
@@ -1980,7 +1969,6 @@ def rpuntos():
         cur.execute(yQuery %GW)
         wordn="+COALESCE(new.pts_fecha_"+str(i)+",0)"
         wordt=wordt+wordn
-    print('wordt=',wordt)
     tiQuery="""
     CREATE OR REPLACE TRIGGER ptstot_on_insert BEFORE INSERT ON puntos
     FOR EACH row
@@ -2153,7 +2141,6 @@ def crea_liga_nueva(name):
     liga=cur.fetchone()[0]
     code=str(liga)+name 
     cur.execute(cQuery ,(code,liguita))
-    print(code)
     cur.execute(rQuery ,(ses,liga))
     mysql.connection.commit()
     return(code)
@@ -2244,18 +2231,14 @@ def crea_puntos_ronda():
                             pts_jug_ronda=cur.fetchone()
                             if pts_jug_ronda == None: pts_jug_ronda='0'
                             pts_totales-=int(pts_jug_ronda[0])
-                        print('suplentes wasitos')
-                print('El equipo ', usuario[0],' hizo ',pts_totales,' puntos en la ronda',(i))
                 jornada='pts_fecha_'+str(i)
                 cur.execute(lQuery %(jornada,usuario[0],pts_totales,jornada,pts_totales))
             else:
                 pts_totales=0
                 equipo=dict()
-                print('usuario: ',usuario)
                 sron=str('team_fecha_'+str(i))
                 cur.execute(uQuery %(sron,usuario[0]))
                 equipo_json=cur.fetchone()[0]
-                print('equipo_json1: ',equipo_json)
                 if equipo_json==None:
                     for f in range(int(i)-1,1,-1):
                         sron='team_fecha_'+str(f)
@@ -2263,7 +2246,6 @@ def crea_puntos_ronda():
                         equipo_json=cur.fetchone()[0]
                         if equipo_json==None: continue
                         else:break
-                print('equipo_json_post: ',equipo_json)
                 #si mudificamos la escritura de equipos basado en ronda, este bloque debe cambiar-----
                 if equipo_json==None:
                     cur.execute(tQuery %usuario[0])
@@ -2292,8 +2274,6 @@ def crea_puntos_ronda():
                                 pts_jug_ronda=cur.fetchone()
                                 if pts_jug_ronda == None: pts_jug_ronda='0'
                                 pts_totales-=int(pts_jug_ronda[0])
-                            print('suplentes wasitos')
-                    print('El equipo ', usuario[0],' hizo ',pts_totales,' puntos en la ronda',(i))
                     jornada='pts_fecha_'+str(i)
                     cur.execute(lQuery %(jornada,usuario[0],pts_totales,jornada,pts_totales))
         mysql.connection.commit()
@@ -2337,8 +2317,6 @@ def crea_puntos_stage():
                         pts_jug_ronda=cur.fetchone()
                         if pts_jug_ronda == None: pts_jug_ronda='0'
                         pts_totales+=int(pts_jug_ronda[0])
-                    else: print('suplentes wasitos')
-                print('El equipo ', usuario[0],' hizo ',pts_totales,' puntos en la fase',(fecha))
                 GW= ronda
                 lista=GW.split()
                 clave=lista[2].split('-')
@@ -2546,7 +2524,6 @@ def crea_liga_priv():
     cQuery="SELECT ligas_id FROM ligas WHERE teams=%s"
     cur.execute(cQuery, (str(ses),))
     cantidad=cur.fetchall()
-    print('longitud', len(cantidad))
     if len(cantidad)<=4:
         nombre_liga = request.form['nombre_nueva_liga']
         liga_creada=crea_liga_nueva(nombre_liga)
@@ -2648,7 +2625,6 @@ def ingresar():
         #Verifica si obtuvo datos
         if (usuario !=None ):
             password_encriptado_encode = usuario[1].encode()
-            print("password_encode:", password_encode)
             print("password_encriptado_encode:", password_encriptado_encode)
             if (bcrypt.checkpw(password_encode, password_encriptado_encode)):
 
@@ -2692,7 +2668,6 @@ def creaequipo():
         for k,v in session.items():
             if k not in{'id','nombre','correo','tipo'}:
                 session[k]=0
-        print('session creaquipo, reinicio moderno: ', session)
         session['P1']=session['P2']=session['D1']=session['D2']=session['D3']=session['D4']=session['D5']=0
         session['M1']=session['M2']=session['M3']=session['M4']=session['M5']=session['A1']=session['A2']=0
         session['A3']=session['precio_equipo']=0
@@ -2815,12 +2790,10 @@ def ajaxadd():
             if session[str(teamid)] == 3:
                 print('ya tienes 3 jugadores de ', listajugador[2])
                 mens = 'Ya tienes 3 jugadores de '+listajugador[2]+', reemplaza alguno'
-                print(mens)
                 return jsonify(msg=mens)
             else: session[str(teamid)] += 1
         else: session[str(teamid)] = 1
 
-        print('pasa frecuencia ', session)
 
         if listajugador[0] == '1':
             
@@ -2915,7 +2888,6 @@ def ajaxrem():
         preciorem = request.form['price']
         teamrem = request.form['team']
         session[teamrem] -= 1
-        print(preciorem)
         session['precio_equipo'] = session['precio_equipo'] - float(preciorem)
         if 'P1' == userpos: session['P1']= 0
         elif 'P2' == userpos: session['P2']= 0
@@ -2974,7 +2946,6 @@ def puntos():
                 capi=escuadra['capitan']
                 for jug in jugado:
                     juga=list(jug)
-                    print (juga[2])
                     if str(juga[2])==str(capi):
                         pts+=int(jug[5])
                     if str(juga[2]) in supl:
@@ -2985,7 +2956,6 @@ def puntos():
                             pts+=int(jug[5])
                         except:continue
                 pts-=1
-                print(pts)
                 ahora=datetime.datetime.now().isoformat()
                 liga='1098'
                 ronda=fechas_last(ahora,liga)
@@ -3000,7 +2970,6 @@ def puntos():
                 ron_id=cur.fetchone()[0]
                 cur.execute(yQuery, (ron_id,))
                 pjugados=cur.fetchall()
-                print('jugado 17: ', jugado[17])
                 if jugado[17]==[0,0,0]:
                     pts=0
                     return render_template('puntos.html',jP1=jugado[0],jP2=jugado[1],jD1=jugado[2],
@@ -3068,7 +3037,6 @@ def puntos_equipos(login_id,param):
             capi=escuadra['capitan']
             for jug in jugado:
                 juga=list(jug)
-                print (juga[2])
                 if str(juga[2])==str(capi):
                     pts+=int(jug[5])
                 if str(juga[2]) in supl:
@@ -3091,7 +3059,6 @@ def puntos_equipos(login_id,param):
             ron_id=cur.fetchone()[0]
             cur.execute(yQuery, (ron_id,))
             pjugados=cur.fetchall()
-            print(pts)
             return render_template('puntos.html',jP1=jugado[0],jP2=jugado[1],jD1=jugado[2],
             jD2=jugado[3],jD3=jugado[4],jD4=jugado[5],jD5=jugado[6],jM1=jugado[7],
             jM2=jugado[8],jM3=jugado[9],jM4=jugado[10],jM5=jugado[11],jA1=jugado[12],
@@ -3251,7 +3218,6 @@ def ajaxequipo():
         precio_jugador=cur.fetchone()[0]
         precio_equipo+=precio_jugador
         precio_equipo=round(precio_equipo,1)
-        print(precio_jugador,precio_equipo)
     session['suplentes']=team['suplentes'] 
     return jsonify(name_team = name, supl=team['suplentes'],precio_eq=precio_equipo,presu=pres,capi=team['capitan'])
 
@@ -3297,7 +3263,6 @@ def transfer():
         cur = mysql.connection.cursor()
         pQuery="SELECT players_id,img,dname,pos,pts,precio,teams.name,teams.teams_id,teams.logo FROM players JOIN teams ON players.team=teams.teams_id"
         ses=session['id']
-        print(ses)
         cur.execute(pQuery)
         jugadores=cur.fetchall()
         listjug=list()
@@ -3332,7 +3297,6 @@ def ajaxtransfer():
     for key in lista_eq:
         user_team[str(key)]=session[key]
     session[posicion]=0
-    print('session ajaxtransfer:',session)
     equipo=list()
     for k,v in user_team.items():
         if k!='suplentes':
@@ -3462,7 +3426,6 @@ def ajaxcompra():
         if v==0:
             session[k]=userid
             pos=k
-    print ('session ajaxcompra: ',session)
 
     return jsonify(pos=pos)
 
@@ -3548,12 +3511,10 @@ def adminTasks():
         rondas=fecha_live()
         scheduler = BackgroundScheduler()
         ahora=datetime.datetime.now().isoformat()
-        print(ahora)
         for ronda in rondas:
             inicio=str(ronda[0].isoformat()+'T11:00:00')
             fin=str(ronda[1].isoformat()+'T23:59:00')
             if ahora < fin:
-                print('inicio:',inicio, 'fin',fin)
                 scheduler.add_job(func=livescores, trigger="interval", seconds=120, start_date=inicio , end_date=fin)
             else:
                 continue
