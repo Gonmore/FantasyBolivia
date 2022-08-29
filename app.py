@@ -1177,7 +1177,7 @@ def API_squads(sesion,equipos):
     jQuery='''CREATE TABLE IF NOT EXISTS players (
         players_id BIGINT PRIMARY KEY,
         pos VARCHAR(255),
-        injured VARCHAR(255) NOT NULL,
+        injured VARCHAR(255),
         team VARCHAR(255),
         fullname VARCHAR(255) NOT NULL,
         dname VARCHAR(255) NOT NULL,
@@ -1954,7 +1954,7 @@ def rpuntos():
         ptstot  INT(5),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )  ENGINE=INNODB;''' 
-    yQuery="""ALTER TABLE puntos ADD COLUMN IF NOT EXISTS pts_%s INT;"""
+    yQuery="""ALTER TABLE puntos ADD COLUMN IF NOT EXISTS pts_%s INT(5)"""
     mQuery="SELECT name FROM rounds WHERE stage_id=%s"
     
     cur.execute(hQuery)
