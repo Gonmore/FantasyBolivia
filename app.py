@@ -1622,15 +1622,15 @@ def calc_pts(partido):
         json_data= json.loads(data)
         d_player=json_data['data']
         cQuery='''INSERT INTO players
-        (players_id,pos,team,fullname,dname,nacion,birthdate,birthplace,height,weight,img) 
+        (players_id,pos,team,fullname,dname,nacion,birthdate,birthplace,height,weight,img,injured) 
         VALUES 
-        (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         ON DUPLICATE KEY UPDATE
         team=%s,fullname=%s,dname=%s,nacion=%s,birthdate=%s,
         birthplace=%s,height=%s,weight=%s,img=%s;'''
         cur.execute(cQuery,(jugador[1],d_player['position_id'],d_player['team_id'],
             d_player['fullname'],d_player['display_name'],d_player['nationality'],d_player['birthdate'],d_player['birthplace'],
-            d_player['height'],d_player['weight'],d_player['image_path'],d_player['team_id'],
+            d_player['height'],d_player['weight'],d_player['image_path'],'0',d_player['team_id'],
             d_player['fullname'],d_player['display_name'],d_player['nationality'],d_player['birthdate'],d_player['birthplace'],
             d_player['height'],d_player['weight'],d_player['image_path']))
         mysql.connection.commit()
@@ -2747,8 +2747,8 @@ def ajaxadd():
                 else:
                     name = request.form['nameteam']
                     pres=float(80 - session['precio_equipo'])
-                    sQuery = """INSERT into registrados (name,login_id,team,ultimo,fav,pres,trans) 
-                    VALUES (%s,%s,%s,%s,%s,%s,%s)"""
+                    sQuery = """INSERT into registrados (name,login_id,team,ultimo,fav,pres,trans,detalle) 
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
                     
                     rQuery="INSERT INTO registrado_liga (registrado_id, liga_id) VALUES (%s,%s)"
                     ses=session['id']
@@ -2763,7 +2763,7 @@ def ajaxadd():
                     equipo=json.dumps(user_team)
                     #Ejecuta
                     trans=1
-                    cur.execute(sQuery, (name,session['id'],equipo,equipo,fav,pres,trans))
+                    cur.execute(sQuery, (name,session['id'],equipo,equipo,fav,pres,trans,'0'))
                     cur.execute(rQuery ,(ses,'1'))
                     cur.execute(rQuery ,(ses,'2'))
 
