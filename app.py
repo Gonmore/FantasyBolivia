@@ -3485,6 +3485,7 @@ def adminGMD():
     else:
         return render_template('ingresar.html')
 
+#Tarea rutina
 @app.route("/adminTarea",methods=["POST","GET"])
 def adminTarea():
     img_change()
@@ -3532,7 +3533,6 @@ def adminTasks():
     scheduler.start()
 
 
-
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
     return render_template('adminGMD.html')
@@ -3545,10 +3545,6 @@ def adminTPuntos():
     #except:
     #    crea_puntos_stage()
     #    return render_template('adminGMD.html')
-
-
-
-
 
 
 @app.route('/salir')
