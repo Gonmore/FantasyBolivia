@@ -2583,21 +2583,28 @@ def registrar():
         password_encode = password.encode("utf-8")
         password_encriptado = bcrypt.hashpw(password_encode, semilla)
         #prepara el query
+        cQuery ="SELECT id FROM login WHERE correo='%s'"
         sQuery = "INSERT into login (correo, password, nombre, tipo) VALUES (%s, %s, %s, %s)"
         #crea cursor
         cur = mysql.connection.cursor()
-        #Ejecuta
-        cur.execute(sQuery, (correo,password_encriptado,nombre,'usuario'))
-        mysql.connection.commit()
+        cur.execute(cQuery %correo)
+        creado=cur.fetchone()
+        if creado==None:
+            #Ejecuta
+            cur.execute(sQuery, (correo,password_encriptado,nombre,'usuario'))
+            mysql.connection.commit()
 
-        #registra la sesion
-        session['nombre'] = nombre
-        lQuery = 'SELECT id FROM login WHERE correo = %s'
-        cur.execute(lQuery,[correo])
-        usuario = cur.fetchone()
-        session['id'] = usuario[0] 
-        
-        return redirect(url_for('inicio'))
+            #registra la sesion
+            session['nombre'] = nombre
+            lQuery = 'SELECT id FROM login WHERE correo = %s'
+            cur.execute(lQuery,[correo])
+            usuario = cur.fetchone()
+            session['id'] = usuario[0] 
+            
+            return redirect(url_for('inicio'))
+        else:
+            flash("Ya hay una cuenta asociada a este correo", "alert-info")
+            return render_template('ingresar.html')
 
 @app.route("/ingresar", methods=["GET","POST"])
 def ingresar():
