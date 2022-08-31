@@ -493,10 +493,8 @@ def carga_equipos(param,login_id):
     mysql.connection.commit()
     name=plantilla[1]
 
-    P1=dicequipo['P1'];P2=dicequipo['P2']
-    D1=dicequipo['D1'];D2=dicequipo['D2'];D3=dicequipo['D3'];D4=dicequipo['D4'];D5=dicequipo['D5']
-    M1=dicequipo['M1'];M2=dicequipo['M2'];M3=dicequipo['M3'];M4=dicequipo['M4'];M5=dicequipo['M5']
-    A1=dicequipo['A1'];A2=dicequipo['A2'];A3=dicequipo['A3']
+    
+    
     ron_id=str('fecha_'+rond+'.team')
     ron_pl=str('fecha_'+rond+'.player_id')
     dQuery="""SELECT teams.logo,%s.name,player_id,team,pos,pts,imbat,gol,pen,asis,ta,tr 
