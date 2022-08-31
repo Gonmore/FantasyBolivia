@@ -134,37 +134,10 @@ def carga_equipo(param):
 
     cur.execute(fQuery %(sron,ses))
     plantilla=cur.fetchone()
+
     ron_id=str('fecha_'+rond+'.team')
     ron_pl=str('fecha_'+rond+'.player_id')
-    """
-    except:
-        st=ronda[0]
-        sta=st.split()
-        print('sta', sta, 'ronda', ronda)
-        try:
-            stag=sta[2].split('-')
-            stage=stag[0]
-        except:
-            stage=sta[2]
-        print(stage)
-        print('entra a except:', ronda)
-        if param == None:
-            sron=str('team_'+stage)
-            ron=str(stage)
-            rond=stage
-        else:
-            if param == 1:
-                if stage=='Finals': stage=stage
-                elif stage=='Semi': stage='Finals'
-                elif stage=='Quarter': stage='Semi'
-            sron=str(stage)
-            stron=str('team_'+stage)
-            ron=str(stage)
-            rond=stage
-        cur.execute(fQuery %(stron,ses))
-        plantilla=cur.fetchone()
-        ron_id=str(rond+'.team')
-        ron_pl=str(rond+'.player_id')"""
+    
     if plantilla[0]=='0':
         no_inscrito=True
     if plantilla[0] == None or '0':
@@ -479,6 +452,11 @@ def carga_equipos(param,login_id):
         fecha=int(param)
     cur.execute(fQuery %(sron,ses))
     plantilla=cur.fetchone()
+
+    if plantilla[0]=='0':
+        no_inscrito=True
+
+    
     if plantilla[0] == None:
         for i in range(fecha,1,-1):
             sron=str('team_fecha_'+str(i))
@@ -486,7 +464,7 @@ def carga_equipos(param,login_id):
             plantilla=cur.fetchone()
             if plantilla[0]==None: continue
             else:break
-    if plantilla[0]==None:
+    if plantilla[0]==None or '0':
         cur.execute(sQuery %(ses))
         plantilla=cur.fetchone()
     dicequipo=json.loads(plantilla[0])
@@ -762,6 +740,12 @@ def carga_equipos(param,login_id):
         jugadoA3.append(price)
 
     capi=dicequipo['capitan']
+    if no_inscrito==True:
+        name='NO INSCRITO'
+        capi=[0,0,0]
+        return (jugadoP1,jugadoP2,jugadoD1,jugadoD2,jugadoD3,jugadoD4, 
+        jugadoD5,jugadoM1,jugadoM2,jugadoM3,jugadoM4,jugadoM5,jugadoA1,
+        jugadoA2,jugadoA3,name,dicequipo,capi)
     return (jugadoP1,jugadoP2,jugadoD1,jugadoD2,jugadoD3,jugadoD4, 
         jugadoD5,jugadoM1,jugadoM2,jugadoM3,jugadoM4,jugadoM5,jugadoA1,
         jugadoA2,jugadoA3,name,dicequipo,capi)
@@ -2954,7 +2938,6 @@ def puntos():
                     if str(juga[2])==str(capi):
                         pts+=int(jug[5])
                     if str(juga[2]) in supl:
-                        print('esta')
                         continue
                     else:
                         try:
@@ -3048,7 +3031,6 @@ def puntos_equipos(login_id,param):
                 if str(juga[2])==str(capi):
                     pts+=int(jug[5])
                 if str(juga[2]) in supl:
-                    print('esta')
                     continue
                 else:
                     try:
@@ -3116,7 +3098,6 @@ def equipo():
                     if str(juga[2])==str(capi_ant):
                         pts+=int(jug[5])
                     if str(juga[2]) in supl_ant:
-                        print('esta')
                         continue
                     else:
                         try:
@@ -3395,7 +3376,6 @@ def ajaxcompra():
         user_team[str(key)]=session[key]
     cur = mysql.connection.cursor()
     if userid=='crear':
-        print('entra a intento compra')
         if session['P1']==0 or session['P2']==0 or session['D1']==0 or session['D2']==0 or session['D3']==0 or session['D4']==0 or session['D5']==0 or session['M1']==0 or session['M2']==0 or session['M3']==0 or session['M4']==0 or session['M5']==0 or session['A1']==0 or session['A2']==0 or session['A3']==0:
             return jsonify(msg ="Debes elejir a los 15 jugadores de la plantilla")
             
@@ -3466,7 +3446,6 @@ def adminGMD():
     if 'nombre' in session:
         if session['tipo']=='administrador':
             if request.method=='POST':
-                print('entra')    
                 league_id = request.form['API_league_ID']
                 current=API_currents(league_id)
                 print('pasa current',current)
