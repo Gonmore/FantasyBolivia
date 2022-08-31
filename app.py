@@ -3012,6 +3012,9 @@ def ajaxfile_pts():
 @app.route("/pu/<string:login_id>/<string:param>/",methods=["POST","GET"])
 def puntos_equipos(login_id,param):
     jugado=list()
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
     if 'nombre' in session:
         cur = mysql.connection.cursor()
         sQuery = 'SELECT * FROM registrados WHERE login_id = %s'
