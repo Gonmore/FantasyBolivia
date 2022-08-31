@@ -503,7 +503,6 @@ def carga_equipos(param,login_id):
     jugadorP2 = cur.fetchone()
     if jugadorP2!=None:
         jugadoP2 = list(jugadorP2)
-        print(jugadoP2)
         jugadoP2[4]= abr_posi(jugadoP2[4])
         cur.execute(jQuery %dicequipo['P2'])
         price=cur.fetchone()[0]
