@@ -3327,18 +3327,21 @@ def ajaxchange():
     ses=session['id']
     play_in = request.form['user_a']
     capi=request.form['capi']
+    lista_eq=["P1","P2","D1","D2","D3","D4","D5","M1","M2","M3","M4","M5","A1","A2","A3","suplentes","capitan"]
+    user_team=dict()
+    for key in lista_eq:
+        user_team[str(key)]=session[key]
+    cur = mysql.connection.cursor()
     if play_in=='guardar':
         cero=0
-        team=dict()
-        team=carga_dict_equipo(cero,ses)
         rond=str('team_fecha_'+ronda[1])
         sQuery= """UPDATE registrados SET ultimo = %s WHERE login_id = %s"""
         
         fQuery= """UPDATE registrados SET %s = '%s' WHERE login_id = %s"""
         #crea cursor
         cur = mysql.connection.cursor()
-        team['capitan']=capi
-        equipo=json.dumps(team)
+        user_team['capitan']=capi
+        equipo=json.dumps(user_team)
         #equipo=json.dumps(dicequipo)
         #Ejecuta
         cur.execute(sQuery, (equipo,session['id']))
