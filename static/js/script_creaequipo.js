@@ -69,6 +69,7 @@ function anchoPage(){
           $(document).ready(function(){
                     
             $('.botoninfo').click(function(){
+              $('.botonadd').removeAttr("disabled", "disabled");
               var userid = $(this).data('id');
               var teamid = $(this).attr("team");
               var nameid = $(this).attr('name');
@@ -105,6 +106,7 @@ function anchoPage(){
     //Script cuando se hace click en botonadd-->
           $(document).ready(function(){
           $('.botonadd').click(async function(){
+            $('.botonadd').attr("disabled", "disabled");
             guardado=false;
             var user = $(this).attr('data-usr');
             var team = $(this).attr('data-team');
@@ -113,16 +115,18 @@ function anchoPage(){
             var timage = $(this).attr('data-timage');
             var saltar_paso = false;
             var POS = 
+            
             $('#empModal').on('hidden.bs.modal', function() {
                 var user = undefined;
                 var team = undefined;
                 var name = undefined;
                 var price = undefined;
                 var timage = undefined;
-                console.log(user);
               });
-            console.log(user);
-            
+              
+              $('#empModal').fadeOut(2000,function() {
+                $('#empModal').modal('hide');
+              });
               await $.ajax({
               url: '/ajaxadd',
               type: 'post',
@@ -136,17 +140,18 @@ function anchoPage(){
                 }
                 POS = response.POS;
                 team_price = response.price;
-                console.log(team_price)
               }
               });
             if(saltar_paso == true) { return false;}
             else {
-            console.log(POS);
+            
             $('#'+POS).hide("img");
             $('#btn_'+POS).prepend("<img src="+timage+" alt='Micha' id='img_cambiada' class='img-fluid rounded img_"+POS+"' data-usr='"+user+"' data-price='"+price+"' data-team='"+team+"'><b>"+name+"</b><br><b>"+price+"</b>");
             $('#btn_'+POS).addClass("boton-remp");
-
-            $('#empModal').modal('hide');
+            cuadro_quita=$('#btn_'+POS).closest('.cuadro_contenedor');
+            cuadro_quita.addClass('cuadro_quita');
+            cuadro_quita.removeClass('cuadro_contenedor');
+            
             $('.btn_'+user).attr("disabled", "disabled");
             $('.btn_'+user).removeClass("boton-info");
             
@@ -162,10 +167,8 @@ function anchoPage(){
           });
 
               //Script para mostrar modal con datos de jugador, y pasar datos al boton-quitar-->
-              $(document).ready(function(){
-                    
-                $('.cuadro_contenedor').click(function(){ 
-                  console.log('entra remp');   
+              $(document).on('click','.cuadro_quita', function(){
+                      
                   var imagen=$(this).find('#img_cambiada');
                   var close=$(this).find('.btn-close');
                   var userid = imagen.data('usr');
@@ -173,7 +176,6 @@ function anchoPage(){
                   var price = imagen.data('price');
                   var team_price = parseFloat($('#campopresupuesto').text()) ;
                   var posicion=close.data('pos');
-                  console.log(userid,teamid,price,team_price,posicion);
                   $('.botonquitar').attr("data-usr", userid);
                   $('.botonquitar').attr("data-team", teamid);
                   $('.botonquitar').attr("data-price", price);
@@ -196,7 +198,7 @@ function anchoPage(){
                           }
                       });   
                     });
-                  });
+                  
 
     //Script para eliminar jugador con modal-->
     $(document).ready(function(){
@@ -208,9 +210,11 @@ function anchoPage(){
         var price = parseFloat($(this).attr('data-price'));
         $('#btn_'+POS).find('b').remove();
         $('#btn_'+POS).find('br').remove();
+        cuadro_q=$('#btn_'+POS).closest('.cuadro_quita');
+        cuadro_q.addClass('cuadro_contenedor');
+        cuadro_q.removeClass('cuadro_quita');
         $('.img_'+POS).remove();
         $('#'+POS).show("img");
-        console.log(userid, team_price, price);
 
         $.ajax({
             url: '/ajaxrem',
@@ -304,7 +308,6 @@ function anchoPage(){
         $('.filtro_pos').prop('checked', false);
         var imv=$(this);
         var last_reemp=$(that).attr('data-pos');
-        console.log('aqui seria',imv,last_reemp);
         $('.cajafiltro').css('display','block');
         
         $('#filtro_'+last_reemp).prop('checked', true);
@@ -402,6 +405,7 @@ function anchoPage(){
         $(document).ready(function(){
                   
           $('.botoninfo').click(function(){
+            $('.botonadd').removeAttr("disabled", "disabled");
             var userid = $(this).data('id');
             var teamid = $(this).attr("team");
             var nameid = $(this).attr('name');
@@ -434,9 +438,10 @@ function anchoPage(){
             });
 
   //Script cuando se hace click en botonadd-->
-        $(document).ready(function(){
+      $(document).ready(function(){
         $('.botonadd').click(async function(){
-          guardado=false
+          $('.botonadd').attr("disabled", "disabled");
+          guardado=false;
           var user = $(this).attr('data-usr');
           var team = $(this).attr('data-team');
           var name = $(this).attr('data-name');
@@ -444,16 +449,18 @@ function anchoPage(){
           var timage = $(this).attr('data-timage');
           var saltar_paso = false;
           var POS = 
+          
           $('#empModal').on('hidden.bs.modal', function() {
               var user = undefined;
               var team = undefined;
               var name = undefined;
               var price = undefined;
               var timage = undefined;
-              console.log(user);
             });
-          console.log(user);
-          
+            $('#empModal').fadeOut(2000,function() {
+              $('#empModal').modal('hide');
+            });
+            $('.cajafiltro').css('display','none');
             await $.ajax({
             url: '/ajaxadd',
             type: 'post',
@@ -467,34 +474,34 @@ function anchoPage(){
               }
               POS = response.POS;
               team_price = response.price;
-              console.log(team_price)
             }
             });
           if(saltar_paso == true) { return false;}
           else {
-          console.log(POS);
+          
           $('#'+POS).hide("img");
           $('#btn_'+POS).prepend("<img src="+timage+" alt='Micha' id='img_cambiada' class='img-fluid rounded img_"+POS+"' data-usr='"+user+"' data-price='"+price+"' data-team='"+team+"'><b>"+name+"</b><br><b>"+price+"</b>");
+          $('#btn_'+POS).addClass("boton-remp");
+          cuadro_quita=$('#btn_'+POS).closest('.cuadro_contenedor');
+          cuadro_quita.addClass('cuadro_quita');
+          cuadro_quita.removeClass('cuadro_contenedor');
           
-          $('#empModal').modal('hide');
           $('.btn_'+user).attr("disabled", "disabled");
           $('.btn_'+user).removeClass("boton-info");
+          
           var pres = 80 - team_price
           $('#campopresupuesto').text(pres);
           if (pres<0){
             $('#campopresupuesto').css("color", "red")
           }
           }
-          $('.cajafiltro').css('display','none');
+          
         });
         
         });
   
    //Script para mostrar modal con datos de jugador, y pasar datos al boton-quitar-->
-   $(document).ready(function(){
-                    
-    $('.cuadro_contenedor').click(function(){ 
-      console.log('entra remp');   
+   $(document).on('click','.cuadro_quita', function(){
       var imagen=$(this).find('#img_cambiada');
       var close=$(this).find('.btn-close');
       var userid = imagen.data('usr');
@@ -502,7 +509,6 @@ function anchoPage(){
       var price = imagen.data('price');
       var team_price = parseFloat($('#campopresupuesto').text()) ;
       var posicion=close.data('pos');
-      console.log(userid,teamid,price,team_price,posicion);
       $('.botonquitar').attr("data-usr", userid);
       $('.botonquitar').attr("data-team", teamid);
       $('.botonquitar').attr("data-price", price);
@@ -525,34 +531,7 @@ function anchoPage(){
               }
           });   
         });
-      });
-
-  //Script para eliminar jugador-->
-        $(document).ready(function(){
-          $('.btn-close').click(function(){
-            var POS = $(this).attr('data-pos');
-            var userid = $('.img_'+POS).attr('data-usr');
-            var teamid = $('.img_'+POS).attr('data-team');
-            var team_price = parseFloat($('#campopresupuesto').text()) ;
-            var price = parseFloat($('.img_'+POS).attr('data-price'));
-            $('#btn_'+POS).find('b').remove();
-            $('#btn_'+POS).find('br').remove();
-            $('.img_'+POS).remove();
-            $('#'+POS).show("img");
-            console.log(userid, team_price, price);
-
-            $.ajax({
-                url: '/ajaxrem',
-                type: 'post',
-                data:  {userpos: POS, price: price, team: teamid},
-            });
-            $('.btn_'+userid).removeAttr("disabled", "disabled");
-            $('.btn_'+userid).addClass("boton-info");
-            var pres = team_price + price;
-            $('#campopresupuesto').text(pres)
-            if (pres>0){ $('#campopresupuesto').css("color", "black") }
-          });
-        });
+      
 
    //Script para eliminar jugador con modal-->
         $(document).ready(function(){
@@ -564,9 +543,11 @@ function anchoPage(){
             var price = parseFloat($(this).attr('data-price'));
             $('#btn_'+POS).find('b').remove();
             $('#btn_'+POS).find('br').remove();
+            cuadro_q=$('#btn_'+POS).closest('.cuadro_quita');
+            cuadro_q.addClass('cuadro_contenedor');
+            cuadro_q.removeClass('cuadro_quita');
             $('.img_'+POS).remove();
             $('#'+POS).show("img");
-            console.log(userid, team_price, price);
 
             $.ajax({
                 url: '/ajaxrem',
