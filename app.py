@@ -427,7 +427,7 @@ def carga_equipos(param,login_id):
     ahora=datetime.datetime.now().isoformat()
     liga='1098'
     ronda=fechas_last(ahora,liga)
-        
+    no_inscrito=False   
     #GW = request.form['GW']
     
     sQuery = "SELECT team,name,fav FROM registrados WHERE login_id = %s"
