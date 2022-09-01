@@ -3329,10 +3329,11 @@ def ajaxchange():
     capi=request.form['capi']
     lista_eq=["P1","P2","D1","D2","D3","D4","D5","M1","M2","M3","M4","M5","A1","A2","A3","suplentes","capitan"]
     user_team=dict()
-    for key in lista_eq:
-        user_team[str(key)]=session[key]
+    
     cur = mysql.connection.cursor()
     if play_in=='guardar':
+        for key in lista_eq:
+            user_team[str(key)]=session[key]
         cero=0
         rond=str('team_fecha_'+ronda[1])
         sQuery= """UPDATE registrados SET ultimo = %s WHERE login_id = %s"""
