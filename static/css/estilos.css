@@ -628,7 +628,9 @@ flex: 1;
     align-items: center;
     width: 100%;
     height: 25%;
+    align-self: center;
     }
+
 .fila-cancha {
     display: flex;
     -ms-flex-align: center;
@@ -719,3 +721,11 @@ html body{
 .pos_cancha{
     color:rgb(216, 215, 215);
 }
+@media (max-width:800px) { 
+    .botonera {
+        padding-left: 165px;
+    }
+    .info_bot {
+        padding-left: 50px;
+    }
+ }

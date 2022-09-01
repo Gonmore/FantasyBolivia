@@ -256,6 +256,12 @@ function anchoPage(){
                 alert('Ingresa nombre de tú equipo');
                 return false;
               }
+              console.log('fav:' ,fav)
+              if (fav == ''){
+                alert('Elige tu equipo favorito');
+                $('#favModal').modal('show');
+                return false;
+              }
               else {
                 $.ajax({
                   url: '/ajaxadd',
@@ -584,6 +590,11 @@ function anchoPage(){
             
             if (nameteam == ''){
               alert('Ingresa nombre de tú equipo');
+              return false;
+            }
+            if (fav == ''){
+              alert('Elige tu equipo favorito');
+              $('#favModal').modal('show');
               return false;
             }
             else {
