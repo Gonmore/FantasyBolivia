@@ -2,6 +2,7 @@
           
           $(document).ready(function(){
             guardado=true;
+            $('.btn_guardar').addClass("disabledbutton");
             //Script filtro tabla-->
             $("input:checkbox").on("change", function () {
               $("input:checkbox").not(this).prop('checked', false)
@@ -184,8 +185,6 @@
                 type: 'post',
                 data:  {user_a: user, user_b: user_b, capi:capi},
                 success: function(){
-                console.log('Jugador Cambiado');
-                
                 }
               });
 
@@ -257,7 +256,7 @@
             }
 
             $('.jugador_ico').on('click', function(){
-              
+              $('.btn_guardar').removeClass("disabledbutton");
               $(".cuadro_contenedor").removeClass("disabledbutton");
               $('.row_cancha').removeClass("disabledbutton");
               $('#suplente_0').removeClass("disabledbutton");
@@ -279,6 +278,7 @@ $(document).ready(function(){
   $('.botoncapitan').click(function(){
     console.log('debanca' , debanca);
     var user = $(this).attr('data-usr');
+    $('.btn_guardar').removeClass("disabledbutton");
     $('#empModal').on('hidden.bs.modal', function() {
       var user = undefined;
     });
