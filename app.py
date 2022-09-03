@@ -2469,7 +2469,7 @@ def ligas():
             
             ligas=info_liga(ses)
             return render_template('ligas.html', ronda=ronda[1], ligas=ligas)
-        else: return render_template('creaquipo.html')
+        else: return render_template('creaequipo.html')
     else:
         return render_template('ingresar.html')
 
