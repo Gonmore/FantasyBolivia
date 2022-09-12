@@ -2653,33 +2653,39 @@ def fantasy():
 @app.route("/creaquipo", methods=["GET", "POST"])
 def creaequipo():
     if 'nombre' in session:
-        #return render_template('creaequipo.html')
-        for k,v in session.items():
-            if k not in{'id','nombre','correo','tipo'}:
-                session[k]=0
-        session['P1']=session['P2']=session['D1']=session['D2']=session['D3']=session['D4']=session['D5']=0
-        session['M1']=session['M2']=session['M3']=session['M4']=session['M5']=session['A1']=session['A2']=0
-        session['A3']=session['precio_equipo']=0
-        
-        #print('Variables reiniciadas', session['A1'])
         cur = mysql.connection.cursor()
-        pQuery="SELECT players_id,img,dname,pos,pts,precio,teams.name,teams.teams_id,teams.logo FROM players JOIN teams ON players.team=teams.teams_id"
-        tQuery="SELECT * FROM teams"
-
-        cur.execute(pQuery)
-        jugadores=cur.fetchall()
-        listjug=list()
-        for jugad in jugadores:
-            jugador = list(jugad)
-            jugador[3]= abr_posi(jugador[3])
+        sQuery = 'SELECT * FROM registrados WHERE login_id = %s'
+        cur.execute(sQuery %(session['id']) )
+        user_team = cur.fetchone()
+        mysql.connection.commit()
+        if user_team == None:
+            #return render_template('creaequipo.html')
+            for k,v in session.items():
+                if k not in{'id','nombre','correo','tipo'}:
+                    session[k]=0
+            session['P1']=session['P2']=session['D1']=session['D2']=session['D3']=session['D4']=session['D5']=0
+            session['M1']=session['M2']=session['M3']=session['M4']=session['M5']=session['A1']=session['A2']=0
+            session['A3']=session['precio_equipo']=0
             
-            listjug.append(jugador)
-        cur.execute(tQuery)
-        equipos=cur.fetchall()
+            #print('Variables reiniciadas', session['A1'])
+            cur = mysql.connection.cursor()
+            pQuery="SELECT players_id,img,dname,pos,pts,precio,teams.name,teams.teams_id,teams.logo FROM players JOIN teams ON players.team=teams.teams_id"
+            tQuery="SELECT * FROM teams"
 
-        return render_template('creaequipo.html', jugadores=listjug, equipos=equipos)
+            cur.execute(pQuery)
+            jugadores=cur.fetchall()
+            listjug=list()
+            for jugad in jugadores:
+                jugador = list(jugad)
+                jugador[3]= abr_posi(jugador[3])
+                
+                listjug.append(jugador)
+            cur.execute(tQuery)
+            equipos=cur.fetchall()
+            return render_template('creaequipo.html', jugadores=listjug, equipos=equipos)
 
-        
+        else:
+            return redirect(url_for('equipo'))  
         
     else:
         return render_template('ingresar.html')
@@ -3427,14 +3433,12 @@ def cuenta():
     liga='1098'
     ronda=fechas_last(ahora,liga)
     if 'nombre' in session:
-        if request.method=='POST':
-            
-            
-            return render_template('cuenta.html')
-        else:
-            
-            return render_template('inicio.html', ronda=ronda)
-        
+        cur = mysql.connection.cursor()
+        tQuery="SELECT teams_id,name FROM teams"
+        cur.execute(tQuery)
+        teams_torneo=cur.fetchall()
+
+        return render_template('cuenta.html', teams=teams_torneo)   
     else:
         return render_template('igresar.html')
 
