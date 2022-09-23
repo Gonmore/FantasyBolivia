@@ -1,5 +1,4 @@
 from ast import IsNot
-from msilib.schema import Media
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 from flask_mysqldb import MySQL, MySQLdb
 from flaskext.mysql import MySQL as MySQLext
