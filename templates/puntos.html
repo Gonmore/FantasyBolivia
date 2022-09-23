@@ -31,32 +31,10 @@
               <div class="row mb-5 justify-content-md-center fila-cancha" aria-hidden="true">
                 
                 <div class="input-group mb-3"id="filadatos">
-                    <div class="col" id="col2">
-                      <div class="cuadro_cont_bench">
-                        <div class="cuadro_int_bench_des">
-                          <div class="suplente_int" id="suplente_3"></div>
-                          <div class="suplente_int" id="suplente_2"></div>
-                          <div class="suplente_int" id="suplente_1"></div>
-                          <div class="suplente_int" id="suplente_0"></div>
-                        </div>
-                      </div>
-                      <div class="cuadro_int_bench">
-                        <button id="bench">
-                          <img src="{{url_for('static', filename='images/Bench.png')}}" alt="Banca de suplentes" id="banca_sup">
-                        </button>
-                      </div>
-                      
-                    </div>
+                    
                     <!-- Grid, 15 jugadores unselected/select-->
-                    <div class="col-5 page-wrapper"> 
-                      <div class="row_cancha" id="row_rival">
-                        <div class="column cuadro_contenedor" id="cuadro"></div>
-                        <div class="column cuadro_contenedor"></div>
-                        <div class="column cuadro_contenedor"></div>
-                        <div class="column cuadro_contenedor"></div>
-                        <div class="column cuadro_contenedor"></div>
-                        <div class="column cuadro_contenedor"></div>
-                      </div>
+                    <div class="col-5 page-wrapper-ideal"> 
+                      
                       <div class="row_cancha" id="row_ATA">
                         <div class="column cuadro_contenedor " id="cuadro_A3">
                           <div class="casilla" id="casilla_A3">
@@ -188,6 +166,23 @@
                       <!-- <div class="casilla"><button id="btn_P1" class="jugador_ico"><img src="static/images/PO.png" id="P1" alt="Micha" class="img-fluid rounded"></button></div>
                         -->  
                               
+                    </div>
+                    <!-- Banca de suplentes-->
+                    <div class="col" id="col2">
+                      <div class="cuadro_cont_bench">
+                        <div class="cuadro_int_bench_des">
+                          <div class="suplente_int" id="suplente_3"></div>
+                          <div class="suplente_int" id="suplente_2"></div>
+                          <div class="suplente_int" id="suplente_1"></div>
+                          <div class="suplente_int" id="suplente_0"></div>
+                        </div>
+                      </div>
+                      <div class="cuadro_int_bench">
+                        <button id="bench">
+                          <img src="{{url_for('static', filename='images/Bench.png')}}" alt="Banca de suplentes" id="banca_sup">
+                        </button>
+                      </div>
+                      
                     </div>
                 </div>
                 

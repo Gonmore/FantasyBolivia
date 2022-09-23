@@ -2,7 +2,120 @@
 {% block content %}
         
         <main>
-          
+          <div class="container plano-wraper">
+            
+            <div class="columna-principal">
+              <div class="row justify-content-md-center fila-menu">
+                <div class="row justify-content-md-center info_bot">
+                  <div class="col-md-auto">
+                    <span class="once_ideal">Equipo ideal de la jornada {{ron}}</b></span>
+                  </div>
+                  
+                </div>
+                <div class="col col-lg-2">
+                  
+                </div>
+                <div class="col-md-auto botonera" style="display: none;">
+                  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <a href="#" class="btn-prev btn-secondary btn-lg " role="button" data-jor="{{ron}}" aria-disabled="false">ANT</a>
+                    <a href="#" class="btn btn-primary btn-lg disabled" role="button" aria-disabled="true">JORNADA {{ron}} </a>
+                    <a href="#" class="btn-next btn-secondary btn-lg " role="button" data-jor="{{ron}}" aria-disabled="true">SIG</a>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-5 justify-content-md-center fila-cancha" aria-hidden="true">
+                
+                <div class="input-group mb-3"id="filadatos">
+                    
+                    <!-- Grid, 15 jugadores unselected/select-->
+                    <div class="col-5 page-wrapper-ideal"> 
+                      
+                      <div class="row_cancha" id="row_ATA">
+                        <div class="column cuadro_contenedor " id="cuadro_blanco"></div>
+                        {% for jug in ATA %}
+                          <div class="column cuadro_contenedor " id="cuadro_{{jug[0]}}">
+                            <div class="casilla" id="casilla_{{jug[0]}}">
+                              <button id="btn_{{jug[0]}}" class="jugador_ico cuadro_int">
+                                <img src="/static/images/PL.png" id="{{jug[0]}}" alt="Micha" class="img-fluid rounded img_reemplazo">
+                                <img src='{{jug[19]}}' alt='Micha' id='img_cambiada' class='img-fluid rounded' data-pos='{{jug[2]}}' data-usr='{{jug[0]}}' data-team='{{jug[3]}}'><b>{{jug[1]}}</b><br><b class="pts-jug">{{jug[17]}}</b>
+                              </button>
+                            </div>
+                          </div>
+                        {% endfor %}
+                        <div class="column cuadro_contenedor " id="cuadro_blanco"></div>
+                      </div>
+                      <div class="row_cancha" id="row_MED">
+                        {% for jug in MED %}
+                          <div class="column cuadro_contenedor " id="cuadro_{{jug[0]}}">
+                            <div class="casilla" id="casilla_{{jug[0]}}">
+                              <button id="btn_{{jug[0]}}" class="jugador_ico cuadro_int">
+                                <img src="/static/images/PL.png" id="{{jug[0]}}" alt="Micha" class="img-fluid rounded img_reemplazo">
+                                <img src='{{jug[19]}}' alt='Micha' id='img_cambiada' class='img-fluid rounded' data-pos='{{jug[2]}}' data-usr='{{jug[0]}}' data-team='{{jug[3]}}'><b>{{jug[1]}}</b><br><b class="pts-jug">{{jug[17]}}</b>
+                              </button>
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      <div class="row_cancha" id="row_DEF">
+                        {% for jug in DEF %}
+                          <div class="column cuadro_contenedor " id="cuadro_{{jug[0]}}">
+                            <div class="casilla" id="casilla_{{jug[0]}}">
+                              <button id="btn_{{jug[0]}}" class="jugador_ico cuadro_int">
+                                <img src="/static/images/PL.png" id="{{jug[0]}}" alt="Micha" class="img-fluid rounded img_reemplazo">
+                                <img src='{{jug[19]}}' alt='Micha' id='img_cambiada' class='img-fluid rounded' data-pos='{{jug[2]}}' data-usr='{{jug[0]}}' data-team='{{jug[3]}}'><b>{{jug[1]}}</b><br><b class="pts-jug">{{jug[17]}}</b>
+                              </button>
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      <div class="row_cancha" id="row_POR">
+                        {% for jug in POR %}
+                          <div class="column cuadro_contenedor_por " id="cuadro_{{jug[0]}}">
+                            <div class="casilla" id="casilla_{{jug[0]}}">
+                              <button id="btn_{{jug[0]}}" class="jugador_ico cuadro_int">
+                                <img src="/static/images/PL.png" id="{{jug[0]}}" alt="Micha" class="img-fluid rounded img_reemplazo">
+                                <img src='{{jug[19]}}' alt='Micha' id='img_cambiada' class='img-fluid rounded' data-pos='{{jug[2]}}' data-usr='{{jug[0]}}' data-team='{{jug[3]}}'><b>{{jug[1]}}</b><br><b class="pts-jug">{{jug[17]}}</b>
+                              </button>
+                            </div>
+                          </div>
+                        {% endfor %}
+                        
+                      </div>
+                      <!-- <div class="casilla"><button id="btn_P1" class="jugador_ico"><img src="static/images/PO.png" id="P1" alt="Micha" class="img-fluid rounded"></button></div>
+                        -->  
+                              
+                    </div>
+                </div>
+                
+                  
+              </div>
+            </div>
+            <div class="columna-lateral">
+              <div class="fila-lateral-1">
+                <table class="table table-dark" id="fixture">
+                <thead>
+                  <tr>
+                    <th scope="col">&nbsp;&nbsp;&nbsp;L</th>
+                    <th scope="col"></th>
+                    <th scope="col">&nbsp;&nbsp;&nbsp;V</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for pjugado in pjugados %}
+                    <tr>
+                      <td><img src="{{pjugado[0]}}"></td>
+                      <td scope="colu">{{pjugado[1]}} - {{pjugado[3]}}</td>
+                      <td><img src="{{pjugado[2]}}"></td>
+                      <td>{{pjugado[4]}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tr>
+                </tbody>
+                </table>
+              </div>
+            </div> 
+          </div>
         </main>
         <div class="modal" id="actModal" tabindex="-1">
           <div class="modal-dialog modal-dialog-centered">
@@ -24,7 +137,27 @@
             </div>
           </div>
         </div>
-        
+         <!-- Modal Datos Jugador-->
+         <div class="modal fade" id="empModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Datos del jugador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              
+              </div>
+              
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script> 
+          ron="{{rond}}";
+        </script>
         <script type='text/javascript'>
           $(document).ready(function(){
             setTimeout(function(){
@@ -33,5 +166,6 @@
             
           });
         </script>
+        <script src="{{url_for('static', filename='js/script_inicio.js')}}"></script>
         
 {% endblock %}

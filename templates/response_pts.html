@@ -19,32 +19,62 @@
         
           <tr>
             <th scope="col"> </th>
-            <th scope="col">Min</th>
-            <th scope="col">P.Imb</th>
-            <th scope="col">Gol</th>
-            <th scope="col">Asist</th>
-            <th scope="col"><img src= /static/images/YC.png class="img-responsive" id="tarjeta"></th>
-            <th scope="col"><img src= /static/images/RC.png class="img-responsive" id="tarjeta"></th>
-            <th scope="col">Pen_Falla</th>
-            <th scope="col">Pts</th>
+            {% if totales[1] != 0 %}
+                <th scope="col" id="cab_1">Min</th>
+            {% endif %}
+            {% if totales[2] != 0 %}
+                <th scope="col" id="cab_2">P.Imb</th>
+            {% endif %}
+            {% if totales[3] != 0 %}
+                <th scope="col" id="cab_3">Gol</th>
+            {% endif %}
+            {% if totales[4] != 0 %}
+                <th scope="col" id="cab_4">Asist</th>
+            {% endif %}
+            {% if totales[5] != 0 %} 
+                <th scope="col" id="cab_5"><img src= /static/images/YC.png class="img-responsive" id="tarjeta"></th>
+            {% endif %}
+            {% if totales[6] != 0 %}
+                <th scope="col" id="cab_6"><img src= /static/images/RC.png class="img-responsive" id="tarjeta"></th>
+            {% endif %}
+            {% if totales[8] != 0 %}
+                <th scope="col" id="cab_7">Pen_Falla</th>
+            {% endif %}
+            <th scope="col" id="cab_8">Pts</th>
+            
           </tr>
       </thead>
       <tbody>
           <tr>
-            <th>   </th>  
-            <th scope="col">{{totales[1]}}</th>
-            <th scope="col">{{totales[2]}}</th>
-            <th scope="col">{{totales[3]}}</th>
-            <th scope="col">{{totales[4]}}</th>
-            <th scope="col">{{totales[5]}}</th>
-            <th scope="col">{{totales[6]}}</th>
-            <th scope="col">{{totales[8]}}</th>
+            <th>   </th>
+            {% if totales[1] != 0 %}
+                <th scope="col" id="col_1" data-col="1">{{totales[1]}}</th>
+            {% endif %}
+            {% if totales[2] != 0 %}
+                <th scope="col" id="col_2" data-col="2">{{totales[2]}}</th>
+            {% endif %}
+            {% if totales[3] != 0 %}
+                <th scope="col" id="col_3" data-col="3">{{totales[3]}}</th>
+            {% endif %}
+            {% if totales[4] != 0 %}
+                <th scope="col" id="col_4" data-col="4">{{totales[4]}}</th>
+            {% endif %}
+            {% if totales[5] != 0 %} 
+                <th scope="col" id="col_5" data-col="5">{{totales[5]}}</th>
+            {% endif %}
+            {% if totales[6] != 0 %} 
+                <th scope="col" id="col_6" data-col="6">{{totales[6]}}</th>
+            {% endif %}
+            {% if totales[8] != 0 %}
+                <th scope="col" id="col_7" data-col="7">{{totales[8]}}</th>
+            {% endif %}
             <th scope="col">{{totales[7]}}</th>
+            
            </tr>
         </tbody>                
     </table>
-
 </div>
+
 
 {% endfor %}
 

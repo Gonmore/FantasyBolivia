@@ -1,4 +1,5 @@
 from ast import IsNot
+from msilib.schema import Media
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 from flask_mysqldb import MySQL, MySQLdb
 from flaskext.mysql import MySQL as MySQLext
@@ -1447,14 +1448,12 @@ def precio():
         if j[1]==None: precio=3.5
         else:
             if int(j[1]) == 1:
-                try:
-                    
-                    if j[5] >= 1:
-                        precio+=0.7
-                    
-                    if j[6] >= 1:
-                        precio+=0.4 
-                    
+                if j[5] >= 1:
+                    precio+=0.7
+                
+                if j[6] >= 1:
+                    precio+=0.4 
+                try:   
                     if j[3]/j[9]<=2:
                         precio+=1.5
                     precio = precio + 4
@@ -2308,6 +2307,73 @@ def crea_puntos_stage():
         
     mysql.connection.commit()
 
+def once_ideal():
+    cur = mysql.connection.cursor()
+    ahora=datetime.datetime.now().isoformat()
+    liga='1098'
+    ronda=fechas_last(ahora,liga)
+    fecha=str(int(ronda[1])-1)
+    elegida="fecha_"+fecha
+    oQuery="SELECT %s.*,teams.logo FROM %s JOIN teams ON %s.team=teams.teams_id ORDER BY pts DESC"
+    cur.execute(oQuery %(elegida,elegida,elegida))
+    candidatos=cur.fetchall()
+    once=list()
+    ATA=list()
+    MED=list()
+    DEF=list()
+    POR=list()
+    jugadores=0
+    delanteros=0
+    medios=0
+    defensas=0
+    portero=0
+    for candidato in candidatos:
+        if jugadores<=10:
+            if candidato[2]== 4:
+                if medios<=4:
+                    if delanteros<=2:
+                        delanteros+=1
+                        jugadores+=1
+                        once.append(candidato)
+                        ATA.append(candidato)
+                else:
+                    if delanteros<=1:
+                        delanteros+=1
+                        jugadores+=1
+                        once.append(candidato)
+                        ATA.append(candidato)
+
+            if candidato[2]== 3:
+                if delanteros<=2:
+                    if medios<=4:
+                        medios+=1
+                        jugadores+=1
+                        once.append(candidato)
+                        MED.append(candidato)
+                else:
+                    if medios<=3:
+                        medios+=1
+                        jugadores+=1
+                        once.append(candidato)
+                        MED.append(candidato)
+
+            if candidato[2]== 2:
+                if defensas<=4:
+                    defensas+=1
+                    jugadores+=1
+                    once.append(candidato)
+                    DEF.append(candidato)
+            if candidato[2]== 1:
+                if portero==0:
+                    portero+=1
+                    jugadores+=1
+                    once.append(candidato)
+                    POR.append(candidato)
+            print('jugadores:', jugadores)
+            print('Once ideal: ',once)        
+
+        else: return(ATA,MED,DEF,POR)
+
 
 
 
@@ -2442,12 +2508,23 @@ def main():
 def inicio():
     if 'nombre' in session:
         #----------------------Nombre del torneo! importante para toda la temporada----------------
-        
+        once=list()
+        ATA=list()
+        MED=list()
+        DEF=list()
+        POR=list()
         ahora=datetime.datetime.now().isoformat()
         liga='1098'
         ronda=fechas_last(ahora,liga)
-       
-        return render_template('inicio.html', ronda=ronda)
+        rond=int(ronda[1])-1
+        ron=int(ronda[1])-1
+        once=once_ideal()
+        print('rond:',rond)
+        ATA=once[0]
+        MED=once[1]
+        DEF=once[2]
+        POR=once[3]
+        return render_template('inicio.html',ronda=ronda,ATA=ATA,MED=MED,DEF=DEF,POR=POR,rond=rond,ron=ron)
         
     else:
         return render_template('ingresar.html')
